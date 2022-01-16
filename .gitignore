@@ -1,0 +1,6 @@
+.env
+.ash_history
+.bash_history
+.npm
+.nvm
+.node_repl_history
