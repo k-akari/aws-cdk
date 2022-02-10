@@ -9,5 +9,4 @@ services:
     tty: true
     volumes:
       - .:/home
-    env_file:
-      - .env
+      - ~/.aws:/home/.aws
