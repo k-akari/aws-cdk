@@ -5,10 +5,8 @@ import { Resource } from './abstract/resource';
 export class Subnet extends Resource {
   public subnetPublic1a: CfnSubnet;
   public subnetPublic1c: CfnSubnet;
-  public subnetPublic1d: CfnSubnet;
   public subnetPrivate1a: CfnSubnet;
   public subnetPrivate1c: CfnSubnet;
-  public subnetPrivate1d: CfnSubnet;
 
   private readonly vpc: CfnVPC;
 
