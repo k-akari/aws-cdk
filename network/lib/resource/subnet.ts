@@ -31,13 +31,13 @@ export class Subnet extends Resource {
     })
 
     // Private Subnets
-    const subnetPrivate1a = new CfnSubnet(scope, 'SubnetPrivate1a', {
+    this.subnetPrivate1a = new CfnSubnet(scope, 'SubnetPrivate1a', {
       cidrBlock: '10.0.100.0/24',
       vpcId: this.vpc.ref,
       availabilityZone: 'ap-northeast-1a',
       tags: [{ key: 'Name', value: this.createResourceName(scope, 'subnet-private-1a') }]
     })
-    const subnetPrivate1c = new CfnSubnet(scope, 'SubnetPrivate1c', {
+    this.subnetPrivate1c = new CfnSubnet(scope, 'SubnetPrivate1c', {
       cidrBlock: '10.0.101.0/24',
       vpcId: this.vpc.ref,
       availabilityZone: 'ap-northeast-1c',

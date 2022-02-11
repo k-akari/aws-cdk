@@ -5,6 +5,7 @@ import { Subnet } from './resource/subnet';
 import { InternetGateway } from './resource/internetGateway';
 import { ElasticIp } from './resource/elasticIp';
 import { NatGateway } from './resource/natGateway';
+import { RouteTable } from './resource/routeTable';
 
 export class NetworkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -34,5 +35,18 @@ export class NetworkStack extends Stack {
       elasticIp.ngw1c
     );
     natGateway.createResources(this);
+
+    // Route Table
+    const routeTable = new RouteTable(
+      vpc.vpc,
+      subnet.subnetPublic1a,
+      subnet.subnetPublic1c,
+      subnet.subnetPrivate1a,
+      subnet.subnetPrivate1c,
+      internetGateway.igw,
+      natGateway.ngw1a,
+      natGateway.ngw1c
+    );
+    routeTable.createResources(this);
   }
 }
