@@ -1,17 +1,18 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as Network from '../lib/network-stack';
+import { App } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import * as Network from '../lib/network-stack';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/network-stack.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new Network.NetworkStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+test('Snapshot', () => {
+  const serviceName = 'service';
+  const envType = 'test';
+  const app = new App({
+    context: {
+      'serviceName': serviceName,
+      'envType': envType
+    }
+  });
+  const stack = new Network.NetworkStack(app, 'NetworkStack');
+  const template = Template.fromStack(stack);
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+  expect(template).toMatchSnapshot();
 });
