@@ -20,4 +20,19 @@ test('Subnet', () => {
     AvailabilityZone: 'ap-northeast-1a',
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-public-1a` }]
   });
+  template.hasResourceProperties('AWS::EC2::Subnet', {
+    CidrBlock: '10.0.11.0/24',
+    AvailabilityZone: 'ap-northeast-1c',
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-public-1c` }]
+  });
+  template.hasResourceProperties('AWS::EC2::Subnet', {
+    CidrBlock: '10.0.100.0/24',
+    AvailabilityZone: 'ap-northeast-1a',
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-private-1a` }]
+  });
+  template.hasResourceProperties('AWS::EC2::Subnet', {
+    CidrBlock: '10.0.101.0/24',
+    AvailabilityZone: 'ap-northeast-1c',
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-private-1c` }]
+  });
 });
