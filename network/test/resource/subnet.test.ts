@@ -14,9 +14,10 @@ test('Vpc', () => {
   const stack = new Network.NetworkStack(app, 'NetworkStack');
   const template = Template.fromStack(stack);
 
-  template.resourceCountIs('AWS::EC2::VPC', 1);
-  template.hasResourceProperties('AWS::EC2::VPC', {
-    CidrBlock: '10.0.0.0/16',
-    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-vpc` }]
+  template.resourceCountIs('AWS::EC2::Subnet', 4);
+  template.hasResourceProperties('AWS::EC2::Subnet', {
+    CidrBlock: '10.0.10.0/24',
+    AvailabilityZone: 'ap-northeast-1a',
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-public-1a` }]
   });
 });

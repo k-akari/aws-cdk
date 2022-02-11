@@ -3,10 +3,12 @@ import { Template, Match } from 'aws-cdk-lib/assertions';
 import * as Network from '../../lib/network-stack';
 
 test('NetworkAcl', () => {
+  const serviceName = 'service';
+  const envType = 'test';
   const app = new App({
     context: {
-      'serviceName': 'service',
-      'envType': 'test'
+      'serviceName': serviceName,
+      'envType': envType
     }
   });
   const stack = new Network.NetworkStack(app, 'NetworkStack');
@@ -17,13 +19,13 @@ test('NetworkAcl', () => {
     VpcId: Match.objectLike({
       Ref: 'Vpc'
     }),
-    Tags: [{ 'Key': 'Name', 'Value': 'service-test-nacl-public' }]
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-nacl-public` }]
   });
   template.hasResourceProperties('AWS::EC2::NetworkAcl', {
     VpcId: Match.objectLike({
       Ref: 'Vpc'
     }),
-    Tags: [{ 'Key': 'Name', 'Value': 'service-test-nacl-private' }]
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-nacl-private` }]
   });
 
   template.resourceCountIs('AWS::EC2::NetworkAclEntry', 4);

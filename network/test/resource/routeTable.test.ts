@@ -3,10 +3,12 @@ import { Template, Match } from 'aws-cdk-lib/assertions';
 import * as Network from '../../lib/network-stack';
 
 test('RouteTable', () => {
+  const serviceName = 'service';
+  const envType = 'test';
   const app = new App({
     context: {
-      'serviceName': 'service',
-      'envType': 'test'
+      'serviceName': serviceName,
+      'envType': envType
     }
   });
   const stack = new Network.NetworkStack(app, 'NetworkStack');
@@ -17,19 +19,19 @@ test('RouteTable', () => {
     VpcId: Match.objectLike({
       Ref: 'Vpc'
     }),
-    Tags: [{ 'Key': 'Name', 'Value': 'service-test-rtb-public' }]
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-rtb-public` }]
   });
   template.hasResourceProperties('AWS::EC2::RouteTable', {
     VpcId: Match.objectLike({
       Ref: 'Vpc'
     }),
-    Tags: [{ 'Key': 'Name', 'Value': 'service-test-rtb-private-1a' }]
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-rtb-private-1a` }]
   });
   template.hasResourceProperties('AWS::EC2::RouteTable', {
     VpcId: Match.objectLike({
       Ref: 'Vpc'
     }),
-    Tags: [{ 'Key': 'Name', 'Value': 'service-test-rtb-private-1c' }]
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-rtb-private-1c` }]
   });
 
   template.resourceCountIs('AWS::EC2::Route', 3);
