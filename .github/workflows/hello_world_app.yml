@@ -5,16 +5,16 @@ on:
     branches:
       - main
     paths:
-      - 'network/**'
+      - 'hello_world_app/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'network/**'
+      - 'hello_world_app/**'
 
 defaults:
   run:
-    working-directory: network
+    working-directory: hello_world_app
 
 jobs:
   build:

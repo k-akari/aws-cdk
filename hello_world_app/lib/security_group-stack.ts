@@ -12,7 +12,7 @@ export class SecurityGroupStack extends Stack {
     });
 
     // Security Group
-    const securityGroup = new SecurityGroup(networkStack.vpc);
+    const securityGroup = new SecurityGroup(networkStack.);
     securityGroup.createResources(this);
   }
 }
