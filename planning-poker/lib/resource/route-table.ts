@@ -2,8 +2,8 @@ import { Construct } from 'constructs';
 import { CfnRouteTable, CfnRoute, CfnSubnetRouteTableAssociation } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 import { Subnet } from './subnet';
-import { InternetGateway } from './internetGateway';
-import { NatGateway } from './natGateway';
+import { InternetGateway } from './internet-gateway';
+import { NatGateway } from './nat-gateway';
 import { Vpc } from './vpc';
 
 interface RouteInfo {

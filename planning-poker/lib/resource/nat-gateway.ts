@@ -2,7 +2,7 @@ import { Construct } from 'constructs';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 import { Subnet } from './subnet';
-import { ElasticIp } from './elasticIp';
+import { ElasticIp } from './elastic-ip';
 
 interface ResourceInfo {
   readonly id: string;

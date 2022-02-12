@@ -5,16 +5,16 @@ on:
     branches:
       - main
     paths:
-      - 'hello_world_app/**'
+      - 'planning-poker/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'hello_world_app/**'
+      - 'planning-poker/**'
 
 defaults:
   run:
-    working-directory: hello_world_app
+    working-directory: planning-poker
 
 jobs:
   build:
