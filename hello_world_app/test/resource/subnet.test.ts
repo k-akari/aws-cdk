@@ -1,5 +1,5 @@
 import { App } from 'aws-cdk-lib';
-import { Template } from 'aws-cdk-lib/assertions';
+import { Template, Match } from 'aws-cdk-lib/assertions';
 import * as Network from '../../lib/network-stack';
 
 test('Subnet', () => {
@@ -17,21 +17,33 @@ test('Subnet', () => {
   template.resourceCountIs('AWS::EC2::Subnet', 4);
   template.hasResourceProperties('AWS::EC2::Subnet', {
     CidrBlock: '10.0.10.0/24',
+    VpcId: Match.objectLike({
+      Ref: 'Vpc'
+    }),
     AvailabilityZone: 'ap-northeast-1a',
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-public-1a` }]
   });
   template.hasResourceProperties('AWS::EC2::Subnet', {
     CidrBlock: '10.0.11.0/24',
+    VpcId: Match.objectLike({
+      Ref: 'Vpc'
+    }),
     AvailabilityZone: 'ap-northeast-1c',
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-public-1c` }]
   });
   template.hasResourceProperties('AWS::EC2::Subnet', {
     CidrBlock: '10.0.100.0/24',
+    VpcId: Match.objectLike({
+      Ref: 'Vpc'
+    }),
     AvailabilityZone: 'ap-northeast-1a',
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-private-1a` }]
   });
   template.hasResourceProperties('AWS::EC2::Subnet', {
     CidrBlock: '10.0.101.0/24',
+    VpcId: Match.objectLike({
+      Ref: 'Vpc'
+    }),
     AvailabilityZone: 'ap-northeast-1c',
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-private-1c` }]
   });

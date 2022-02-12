@@ -13,51 +13,24 @@ export class NetworkStack extends Stack {
     super(scope, id, props);
    
     // VPC
-    const vpc = new Vpc();
-    vpc.createResources(this);
+    const vpc = new Vpc(this);
 
     // Subnet
-    const subnet = new Subnet(vpc.vpc);
-    subnet.createResources(this);
+    const subnet = new Subnet(this, vpc);
 
     // Internet Gateway
-    const internetGateway = new InternetGateway(vpc.vpc);
-    internetGateway.createResources(this);
+    const internetGateway = new InternetGateway(this, vpc);
 
     // Elastic IP
-    const elasticIp = new ElasticIp();
-    elasticIp.createResources(this);
+    const elasticIp = new ElasticIp(this);
 
     // NAT Gateway
-    const natGateway = new NatGateway(
-      subnet.subnetPublic1a,
-      subnet.subnetPublic1c,
-      elasticIp.ngw1a,
-      elasticIp.ngw1c
-    );
-    natGateway.createResources(this);
+    const natGateway = new NatGateway(this, subnet, elasticIp);
 
     // Route Table
-    const routeTable = new RouteTable(
-      vpc.vpc,
-      subnet.subnetPublic1a,
-      subnet.subnetPublic1c,
-      subnet.subnetPrivate1a,
-      subnet.subnetPrivate1c,
-      internetGateway.igw,
-      natGateway.ngw1a,
-      natGateway.ngw1c
-    );
-    routeTable.createResources(this);
+    const routeTable = new RouteTable(this, vpc, subnet, internetGateway, natGateway);
 
     // Network ACL
-    const networkAcl = new NetworkAcl(
-      vpc.vpc,
-      subnet.subnetPublic1a,
-      subnet.subnetPublic1c,
-      subnet.subnetPrivate1a,
-      subnet.subnetPrivate1c
-    );
-    networkAcl.createResources(this);
+    const networkAcl = new NetworkAcl(this, vpc, subnet);
   }
 }

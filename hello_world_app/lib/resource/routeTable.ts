@@ -1,6 +1,10 @@
 import { Construct } from 'constructs';
-import { CfnRouteTable, CfnRoute, CfnSubnetRouteTableAssociation, CfnVPC, CfnSubnet, CfnInternetGateway, CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
+import { CfnRouteTable, CfnRoute, CfnSubnetRouteTableAssociation } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
+import { Subnet } from './subnet';
+import { InternetGateway } from './internetGateway';
+import { NatGateway } from './natGateway';
+import { Vpc } from './vpc';
 
 interface RouteInfo {
   readonly id: string;
@@ -27,14 +31,10 @@ export class RouteTable extends Resource {
   public private1a: CfnRouteTable;
   public private1c: CfnRouteTable;
 
-  private readonly vpc: CfnVPC;
-  private readonly subnetPublic1a: CfnSubnet;
-  private readonly subnetPublic1c: CfnSubnet;
-  private readonly subnetPrivate1a: CfnSubnet;
-  private readonly subnetPrivate1c: CfnSubnet;
-  private readonly internetGateway: CfnInternetGateway;
-  private readonly natGateway1a: CfnNatGateway;
-  private readonly natGateway1c: CfnNatGateway;
+  private readonly vpc: Vpc;
+  private readonly subnet: Subnet;
+  private readonly internetGateway: InternetGateway;
+  private readonly natGateway: NatGateway;
   private readonly resources: ResourceInfo[] = [
     {
       id: 'RouteTablePublic',
@@ -42,16 +42,16 @@ export class RouteTable extends Resource {
       routes: [{
         id: 'RoutePublic',
         destinationCidrBlock: '0.0.0.0/0',
-        gatewayId: () => this.internetGateway.ref
+        gatewayId: () => this.internetGateway.igw.ref
       }],
       associations: [
         {
           id: 'AssociationPublic1a',
-          subnetId: () => this.subnetPublic1a.ref
+          subnetId: () => this.subnet.public1a.ref
         },
         {
           id: 'AssociationPublic1c',
-          subnetId: () => this.subnetPublic1c.ref
+          subnetId: () => this.subnet.public1c.ref
         }
       ],
       assign: routeTable => this.public = routeTable
@@ -62,11 +62,11 @@ export class RouteTable extends Resource {
       routes: [{
         id: 'RoutePrivate1a',
         destinationCidrBlock: '0.0.0.0/0',
-        natGatewayId: () => this.natGateway1a.ref
+        natGatewayId: () => this.natGateway.ngw1a.ref
       }],
       associations: [{
         id: 'AssociationPrivate1a',
-        subnetId: () => this.subnetPrivate1a.ref
+        subnetId: () => this.subnet.private1a.ref
       }],
       assign: routeTable => this.private1a = routeTable
     },
@@ -76,38 +76,25 @@ export class RouteTable extends Resource {
       routes: [{
         id: 'RoutePrivate1c',
         destinationCidrBlock: '0.0.0.0/0',
-        natGatewayId: () => this.natGateway1c.ref
+        natGatewayId: () => this.natGateway.ngw1c.ref
       }],
       associations: [{
         id: 'AssociationPrivate1c',
-        subnetId: () => this.subnetPrivate1c.ref
+        subnetId: () => this.subnet.private1c.ref
       }],
       assign: routeTable => this.private1c = routeTable
     }
   ];
 
-  constructor(
-    vpc: CfnVPC,
-    subnetPublic1a: CfnSubnet,
-    subnetPublic1c: CfnSubnet,
-    subnetPrivate1a: CfnSubnet,
-    subnetPrivate1c: CfnSubnet,
-    internetGateway: CfnInternetGateway,
-    natGateway1a: CfnNatGateway,
-    natGateway1c: CfnNatGateway
+  constructor(scope: Construct, vpc: Vpc, subnet: Subnet, internetGateway: InternetGateway, natGateway: NatGateway
   ) {
     super();
-    this.vpc = vpc;
-    this.subnetPublic1a = subnetPublic1a;
-    this.subnetPublic1c = subnetPublic1c;
-    this.subnetPrivate1a = subnetPrivate1a;
-    this.subnetPrivate1c = subnetPrivate1c;
-    this.internetGateway = internetGateway;
-    this.natGateway1a = natGateway1a;
-    this.natGateway1c = natGateway1c;
-  }
 
-  createResources(scope: Construct) {
+    this.vpc = vpc;
+    this.subnet = subnet;
+    this.internetGateway = internetGateway;
+    this.natGateway = natGateway;
+
     for (const resourceInfo of this.resources) {
       const routeTable = this.createRouteTable(scope, resourceInfo);
       resourceInfo.assign(routeTable);
@@ -116,7 +103,7 @@ export class RouteTable extends Resource {
 
   private createRouteTable(scope: Construct, resourceInfo: ResourceInfo): CfnRouteTable {
     const routeTable = new CfnRouteTable(scope, resourceInfo.id, {
-      vpcId: this.vpc.ref,
+      vpcId: this.vpc.vpc.ref,
       tags: [{
         key: 'Name',
         value: this.createResourceName(scope, resourceInfo.resourceName)

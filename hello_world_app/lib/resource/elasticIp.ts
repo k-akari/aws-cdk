@@ -24,11 +24,9 @@ export class ElasticIp extends Resource {
     }
   ];
 
-  constructor() {
+  constructor(scope: Construct) {
     super();
-  }
 
-  createResources(scope: Construct) {
     for (const resourceInfo of this.resourcesInfo) {
       const elasticIp = this.createElasticIp(scope, resourceInfo);
       resourceInfo.assign(elasticIp);

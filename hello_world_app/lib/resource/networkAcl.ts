@@ -1,6 +1,8 @@
 import { Construct } from 'constructs';
-import { CfnNetworkAcl, CfnNetworkAclEntry, CfnSubnetNetworkAclAssociation, CfnVPC, CfnSubnet } from 'aws-cdk-lib/aws-ec2';
+import { CfnNetworkAcl, CfnNetworkAclEntry, CfnSubnetNetworkAclAssociation } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
+import { Vpc } from './vpc';
+import { Subnet } from './subnet';
 
 interface AssociationInfo {
   readonly id: string;
@@ -20,11 +22,8 @@ export class NetworkAcl extends Resource {
   public public: CfnNetworkAcl;
   public private: CfnNetworkAcl;
 
-  private readonly vpc: CfnVPC;
-  private readonly subnetPublic1a: CfnSubnet;
-  private readonly subnetPublic1c: CfnSubnet;
-  private readonly subnetPrivate1a: CfnSubnet;
-  private readonly subnetPrivate1c: CfnSubnet;
+  private readonly vpc: Vpc;
+  private readonly subnet: Subnet;
   private readonly resources: ResourceInfo[] = [
     {
       id: 'NetworkAclPublic',
@@ -34,11 +33,11 @@ export class NetworkAcl extends Resource {
       associations: [
         {
             id: 'NetworkAclAssociationPublic1a',
-            subnetId: () => this.subnetPublic1a.ref
+            subnetId: () => this.subnet.public1a.ref
         },
         {
             id: 'NetworkAclAssociationPublic1c',
-            subnetId: () => this.subnetPublic1c.ref
+            subnetId: () => this.subnet.public1c.ref
         }
       ],
       assign: networkAcl => this.public = networkAcl
@@ -51,34 +50,24 @@ export class NetworkAcl extends Resource {
       associations: [
         {
           id: 'NetworkAclAssociationPrivate1a',
-          subnetId: () => this.subnetPrivate1a.ref
+          subnetId: () => this.subnet.private1a.ref
         },
         {
           id: 'NetworkAclAssociationPrivate1c',
-          subnetId: () => this.subnetPrivate1c.ref
+          subnetId: () => this.subnet.private1c.ref
         }
       ],
       assign: networkAcl => this.private = networkAcl
     }
   ];
 
-  constructor(
-    vpc: CfnVPC,
-    subnetPublic1a: CfnSubnet,
-    subnetPublic1c: CfnSubnet,
-    subnetPrivate1a: CfnSubnet,
-    subnetPrivate1c: CfnSubnet
-  )
+  constructor(scope: Construct, vpc: Vpc, subnet: Subnet)
   {
     super();
-    this.vpc = vpc;
-    this.subnetPublic1a = subnetPublic1a;
-    this.subnetPublic1c = subnetPublic1c;
-    this.subnetPrivate1a = subnetPrivate1a;
-    this.subnetPrivate1c = subnetPrivate1c;
-  }
 
-  createResources(scope: Construct) {
+    this.vpc = vpc;
+    this.subnet = subnet;
+
     for (const resourceInfo of this.resources) {
       const networkAcl = this.createNetworkAcl(scope, resourceInfo);
       resourceInfo.assign(networkAcl);
@@ -87,7 +76,7 @@ export class NetworkAcl extends Resource {
 
   private createNetworkAcl(scope: Construct, resourceInfo: ResourceInfo): CfnNetworkAcl {
     const networkAcl = new CfnNetworkAcl(scope, resourceInfo.id, {
-      vpcId: this.vpc.ref,
+      vpcId: this.vpc.vpc.ref,
       tags: [{
         key: 'Name',
         value: this.createResourceName(scope, resourceInfo.resourceName)

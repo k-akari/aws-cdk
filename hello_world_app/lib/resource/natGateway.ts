@@ -1,6 +1,8 @@
 import { Construct } from 'constructs';
-import { CfnNatGateway, CfnSubnet, CfnEIP } from 'aws-cdk-lib/aws-ec2';
+import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
+import { Subnet } from './subnet';
+import { ElasticIp } from './elasticIp';
 
 interface ResourceInfo {
   readonly id: string;
@@ -13,47 +15,38 @@ interface ResourceInfo {
 export class NatGateway extends Resource {
   public ngw1a: CfnNatGateway;
   public ngw1c: CfnNatGateway;
-  private readonly subnetPublic1a: CfnSubnet;
-  private readonly subnetPublic1c: CfnSubnet;
-  private readonly elasticIpNgw1a: CfnEIP;
-  private readonly elasticIpNgw1c: CfnEIP;
-  private readonly resourcesInfo: ResourceInfo[] = [
+
+  private readonly subnet: Subnet;
+  private readonly elasticIp: ElasticIp;
+  private readonly resources: ResourceInfo[] = [
     {
       id: 'NatGateway1a',
       resourceName: 'ngw-1a',
-      allocationId: () => this.elasticIpNgw1a.attrAllocationId,
-      subnetId: () => this.subnetPublic1a.ref,
+      allocationId: () => this.elasticIp.ngw1a.attrAllocationId,
+      subnetId: () => this.subnet.public1a.ref,
       assign: natGateway => this.ngw1a = natGateway
     },
     {
       id: 'NatGateway1c',
       resourceName: 'ngw-1c',
-      allocationId: () => this.elasticIpNgw1c.attrAllocationId,
-      subnetId: () => this.subnetPublic1c.ref,
+      allocationId: () => this.elasticIp.ngw1c.attrAllocationId,
+      subnetId: () => this.subnet.public1c.ref,
       assign: natGateway => this.ngw1c = natGateway
     }
   ];
 
-  constructor(
-    subnetPublic1a: CfnSubnet,
-    subnetPublic1c: CfnSubnet,
-    elasticIpNgw1a: CfnEIP,
-    elasticIpNgw1c: CfnEIP
-  )
+  constructor(scope: Construct, subnet: Subnet, elasticIp: ElasticIp)
   {
     super();
-    this.subnetPublic1a = subnetPublic1a;
-    this.subnetPublic1c = subnetPublic1c;
-    this.elasticIpNgw1a = elasticIpNgw1a;
-    this.elasticIpNgw1c = elasticIpNgw1c;
-  };
 
-  createResources(scope: Construct) {
-    for (const resourceInfo of this.resourcesInfo) {
+    this.subnet = subnet;
+    this.elasticIp = elasticIp;
+
+    for (const resourceInfo of this.resources) {
       const natGateway = this.createNatGateway(scope, resourceInfo);
       resourceInfo.assign(natGateway);
     }
-  }
+  };
 
   private createNatGateway(scope: Construct, resourceInfo: ResourceInfo): CfnNatGateway {
     const natGateway = new CfnNatGateway(scope, resourceInfo.id, {
