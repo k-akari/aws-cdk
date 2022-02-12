@@ -1,6 +1,6 @@
 import { App } from 'aws-cdk-lib';
 import { Template, Match } from 'aws-cdk-lib/assertions';
-import * as Network from '../../lib/network-stack';
+import * as Network from '../../lib/stack/network-stack';
 
 test('Subnet', () => {
   const serviceName = 'service';

@@ -19,7 +19,7 @@ interface ResourceInfo {
 
 export class SecurityGroup extends Resource {
   public alb: CfnSecurityGroup;
-  public ec2: CfnSecurityGroup;
+  public ecs: CfnSecurityGroup;
   public rds: CfnSecurityGroup;
 
   private readonly vpc: CfnVPC;
@@ -53,22 +53,22 @@ export class SecurityGroup extends Resource {
       assign: securityGroup => this.alb = securityGroup
     },
     {
-      id: 'SecurityGroupEc2',
-      groupDescription: 'for EC2',
+      id: 'SecurityGroupEcs',
+      groupDescription: 'for ECS',
       ingresses: [
         {
-          id: 'SecurityGroupIngressEc21',
+          id: 'SecurityGroupIngressEcs1',
           securityGroupIngressProps: {
             ipProtocol: 'tcp',
             fromPort: 80,
             toPort: 80
           },
-          groupId: () => this.ec2.attrGroupId,
+          groupId: () => this.ecs.attrGroupId,
           sourceSecurityGroupId: () => this.alb.attrGroupId,
         }
       ],
-      resourceName: 'sg-ec2',
-      assign: securityGroup => this.ec2 = securityGroup
+      resourceName: 'sg-ecs',
+      assign: securityGroup => this.ecs = securityGroup
     },
     {
       id: 'SecurityGroupRds',
@@ -82,7 +82,7 @@ export class SecurityGroup extends Resource {
             toPort: 3306
           },
           groupId: () => this.rds.attrGroupId,
-          sourceSecurityGroupId: () => this.ec2.attrGroupId,
+          sourceSecurityGroupId: () => this.ecs.attrGroupId,
         }
       ],
       resourceName: 'sg-rds',

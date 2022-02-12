@@ -1,6 +1,6 @@
 import { App } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import * as Network from '../../lib/network-stack';
+import * as Network from '../../lib/stack/network-stack';
 
 test('NatGateway', () => {
   const serviceName = 'service';
