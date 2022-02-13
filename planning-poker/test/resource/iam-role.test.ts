@@ -1,9 +1,8 @@
 import { App } from 'aws-cdk-lib';
 import { Template, Match } from 'aws-cdk-lib/assertions';
-import { ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import * as Iam from '../../lib/stack/iam-stack';
 
-test('ElasticIp', () => {
+test('IamRole', () => {
   const serviceName = 'service';
   const envType = 'test';
   const app = new App({
