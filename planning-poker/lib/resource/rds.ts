@@ -1,6 +1,5 @@
-import * as cdk from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
-import { CfnDBSubnetGroup } from 'aws-cdk-lib/aws-rds';
+import { CfnDBSubnetGroup, CfnDBClusterParameterGroup, CfnDBParameterGroup } from 'aws-cdk-lib/aws-rds';
 import { Subnet } from '../resource/subnet';
 import { Resource } from './abstract/resource';
 
@@ -9,8 +8,12 @@ export class Rds extends Resource {
 
   constructor(scope: Construct, subnet: Subnet) {
     super();
+
     this.subnet = subnet;
+
     this.createSubnetGroup(scope);
+    this.createClusterParameterGroup(scope);
+    this.createParameterGroup(scope);
   };
 
   private createSubnetGroup(scope: Construct): CfnDBSubnetGroup {
@@ -22,5 +25,31 @@ export class Rds extends Resource {
     });
 
     return subnetGroup;
+  }
+
+  private createClusterParameterGroup(scope: Construct): CfnDBClusterParameterGroup {
+    const clusterParameterGroup = new CfnDBClusterParameterGroup(scope, 'DbClusterParameterGroup', {
+      description: 'Cluster Parameter Group for RDS',
+      family: 'aurora-mysql5.7',
+      parameters: {
+        character_set_server: 'utf8mb4',
+        collation_server: 'utf8mb4_unicode_ci',
+        long_query_time: 1,
+        server_audit_logging: 1,
+        slow_query_log: 1,
+        time_zone: 'Asia/Tokyo'
+      }
+    });
+
+    return clusterParameterGroup;
+  }
+
+  private createParameterGroup(scope: Construct): CfnDBParameterGroup {
+    const parameterGroup = new CfnDBParameterGroup(scope, 'ParameterGroupRds', {
+      description: 'Parameter Group for RDS',
+      family: 'aurora-mysql5.7'
+    });
+
+    return parameterGroup;
   }
 }
