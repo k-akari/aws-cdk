@@ -12,7 +12,7 @@ export class MainStack extends Stack {
     });
 
     new SecurityGroupStack(scope, 'SecurityGroupStack', networkStack.vpc, {
-      stackName: 'security_group-stack'
+      stackName: 'security-group-stack'
     });
   }
 }
