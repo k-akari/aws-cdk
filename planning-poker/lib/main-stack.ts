@@ -2,6 +2,7 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { NetworkStack } from './stack/network-stack';
 import { SecurityGroupStack } from './stack/security-group-stack';
+import { EcrStack } from './stack/ecr-stack';
 
 export class MainStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -13,6 +14,10 @@ export class MainStack extends Stack {
 
     new SecurityGroupStack(scope, 'SecurityGroupStack', networkStack.vpc, {
       stackName: 'security-group-stack'
+    });
+
+    new EcrStack(scope, 'EcrStack', {
+      stackName: 'ecr-stack'
     });
   }
 }
