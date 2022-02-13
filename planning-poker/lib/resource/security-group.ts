@@ -91,19 +91,18 @@ export class SecurityGroup extends Resource {
     }
   ];
 
-  constructor(vpc: Vpc) {
+  constructor(scope: Construct, vpc: Vpc) {
     super();
-    this.vpc = vpc;
-  };
 
-  createResources(scope: Construct) {
+    this.vpc = vpc;
+
     for (const resourceInfo of this.resources) {
       const securityGroup = this.createSecurityGroup(scope, resourceInfo);
       resourceInfo.assign(securityGroup);
 
       this.createSecurityGroupIngress(scope, resourceInfo);
     }
-  }
+  };
 
   private createSecurityGroup(scope: Construct, resourceInfo: ResourceInfo): CfnSecurityGroup {
     const resourceName = this.createResourceName(scope, resourceInfo.resourceName);

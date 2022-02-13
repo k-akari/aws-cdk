@@ -14,7 +14,7 @@ export class MainStack extends Stack {
       stackName: 'network-stack'
     });
 
-    new SecurityGroupStack(scope, 'SecurityGroupStack', networkStack.vpc, {
+    const securityGroupStack = new SecurityGroupStack(scope, 'SecurityGroupStack', networkStack.vpc, {
       stackName: 'security-group-stack'
     });
 
@@ -22,11 +22,11 @@ export class MainStack extends Stack {
       stackName: 'ecr-stack'
     });
 
-    new SecretsManagerStack(scope, 'SecretsManagerStack', {
+    const secretsManagerStack = new SecretsManagerStack(scope, 'SecretsManagerStack', {
       stackName: 'secrets-manager-stack'
     })
 
-    new DatabaseStack(scope, 'DatabaseStack', networkStack.subnet, {
+    new DatabaseStack(scope, 'DatabaseStack', networkStack.subnet, securityGroupStack.sg, secretsManagerStack.ssm, {
       stackName: 'database-stack'
     })
   }
