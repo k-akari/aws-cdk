@@ -1,10 +1,10 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { CfnVPC } from 'aws-cdk-lib/aws-ec2';
+import { Vpc } from '../resource/vpc';
 import { SecurityGroup } from '../resource/security-group';
 
 export class SecurityGroupStack extends Stack {
-  constructor(scope: Construct, id: string, vpc: CfnVPC, props?: StackProps) {
+  constructor(scope: Construct, id: string, vpc: Vpc, props?: StackProps) {
     super(scope, id, props);
 
     // Security Group

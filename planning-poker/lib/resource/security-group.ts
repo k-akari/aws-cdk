@@ -1,5 +1,6 @@
 import { Construct } from 'constructs';
-import { CfnSecurityGroup, CfnSecurityGroupIngress, CfnSecurityGroupIngressProps, CfnVPC } from 'aws-cdk-lib/aws-ec2';
+import { CfnSecurityGroup, CfnSecurityGroupIngress, CfnSecurityGroupIngressProps } from 'aws-cdk-lib/aws-ec2';
+import { Vpc } from '../resource/vpc';
 import { Resource } from './abstract/resource';
 
 interface IngressInfo {
@@ -22,7 +23,7 @@ export class SecurityGroup extends Resource {
   public ecs: CfnSecurityGroup;
   public rds: CfnSecurityGroup;
 
-  private readonly vpc: CfnVPC;
+  private readonly vpc: Vpc;
   private readonly resources: ResourceInfo[] = [
     {
       id: 'SecurityGroupAlb',
@@ -90,7 +91,7 @@ export class SecurityGroup extends Resource {
     }
   ];
 
-  constructor(vpc: CfnVPC) {
+  constructor(vpc: Vpc) {
     super();
     this.vpc = vpc;
   };
@@ -109,7 +110,7 @@ export class SecurityGroup extends Resource {
     const securityGroup = new CfnSecurityGroup(scope, resourceInfo.id, {
       groupDescription: resourceInfo.groupDescription,
       groupName: resourceName,
-      vpcId: this.vpc.ref,
+      vpcId: this.vpc.vpc.ref,
       tags: [{
         key: 'Name',
         value: resourceName

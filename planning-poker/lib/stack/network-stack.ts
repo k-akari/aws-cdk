@@ -10,19 +10,18 @@ import { RouteTable } from '../resource/route-table';
 import { NetworkAcl } from '../resource/network-acl';
 
 export class NetworkStack extends Stack {
-  public readonly vpc: CfnVPC;
+  public readonly vpc: Vpc;
+  public readonly subnet: Subnet;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
    
-    const vpc = new Vpc(this);
-    const subnet = new Subnet(this, vpc);
-    const internetGateway = new InternetGateway(this, vpc);
+    this.vpc = new Vpc(this);
+    this.subnet = new Subnet(this, this.vpc);
+    const internetGateway = new InternetGateway(this, this.vpc);
     const elasticIp = new ElasticIp(this);
-    const natGateway = new NatGateway(this, subnet, elasticIp);
-    new RouteTable(this, vpc, subnet, internetGateway, natGateway);
-    new NetworkAcl(this, vpc, subnet);
-
-    this.vpc = vpc.vpc
+    const natGateway = new NatGateway(this, this.subnet, elasticIp);
+    new RouteTable(this, this.vpc, this.subnet, internetGateway, natGateway);
+    new NetworkAcl(this, this.vpc, this.subnet);
   }
 }
