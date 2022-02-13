@@ -1,18 +1,45 @@
 import { Construct } from 'constructs';
-import { CfnDBSubnetGroup, CfnDBClusterParameterGroup, CfnDBParameterGroup, CfnDBCluster } from 'aws-cdk-lib/aws-rds';
+import { CfnDBSubnetGroup, CfnDBClusterParameterGroup, CfnDBParameterGroup, CfnDBCluster, CfnDBInstance } from 'aws-cdk-lib/aws-rds';
 import { SecurityGroup } from '../resource/security-group';
 import { Subnet } from '../resource/subnet';
 import { SecretsManager, OSecretKey } from '../resource/secrets-manager';
 import { Resource } from './abstract/resource';
 
-export class Rds extends Resource {
-  public dbCluster: CfnDBCluster;
+interface InstanceInfo {
+  readonly id: string;
+  readonly availabilityZone: string;
+  readonly preferredMaintenanceWindow: string;
+  readonly resourceName: string;
+  readonly assign: (instance: CfnDBInstance) => void;
+}
 
+export class Rds extends Resource {
+  public cluster: CfnDBCluster;
+  public instance1a: CfnDBInstance;
+  public instance1c: CfnDBInstance;
+
+  private static readonly engine = 'aurora-mysql';
+  private static readonly databaseName = 'planning-poker';
+  private static readonly dbInstanceClass = 'db.r5.large';
   private readonly subnet: Subnet;
   private readonly sg: SecurityGroup;
   private readonly ssm: SecretsManager;
-
-  private static readonly databaseName = 'planning-poker';
+  private readonly instances: InstanceInfo[] = [
+    {
+      id: 'RdsDbInstance1a',
+      availabilityZone: 'ap-northeast-1a',
+      preferredMaintenanceWindow: 'Mon:19:00-Mon:19:30',
+      resourceName: 'rds-instance-1a',
+      assign: instance => this.instance1a = instance
+    },
+    {
+      id: 'RdsDbInstance1c',
+      availabilityZone: 'ap-northeast-1c',
+      preferredMaintenanceWindow: 'Mon:19:30-Mon:20:00',
+      resourceName: 'rds-instance-1c',
+      assign: instance => this.instance1c = instance
+    }
+  ];
 
   constructor(scope: Construct, subnet: Subnet, sg: SecurityGroup, ssm: SecretsManager) {
     super();
@@ -23,8 +50,13 @@ export class Rds extends Resource {
 
     const subnetGroup = this.createSubnetGroup(scope);
     const clusterParameterGroup = this.createClusterParameterGroup(scope);
-    this.createParameterGroup(scope);
-    this.dbCluster = this.createCluster(scope, subnetGroup, clusterParameterGroup);
+    const parameterGroup = this.createParameterGroup(scope);
+    this.cluster = this.createCluster(scope, subnetGroup, clusterParameterGroup);
+
+    for (const instanceInfo of this.instances) {
+      const instance = this.createInstance(scope, instanceInfo, this.cluster, subnetGroup, parameterGroup);
+      instanceInfo.assign(instance);
+  }
   };
 
   private createSubnetGroup(scope: Construct): CfnDBSubnetGroup {
@@ -86,5 +118,26 @@ export class Rds extends Resource {
     });
 
     return cluster;
+  }
+
+  private createInstance(scope: Construct, instanceInfo: InstanceInfo, cluster: CfnDBCluster, subnetGroup: CfnDBSubnetGroup, parameterGroup: CfnDBParameterGroup): CfnDBInstance {
+    const instance = new CfnDBInstance(scope, instanceInfo.id, {
+      dbInstanceClass: Rds.dbInstanceClass,
+      autoMinorVersionUpgrade: false,
+      availabilityZone: instanceInfo.availabilityZone,
+      dbClusterIdentifier: cluster.ref,
+      dbInstanceIdentifier: this.createResourceName(scope, instanceInfo.resourceName),
+      dbParameterGroupName: parameterGroup.ref,
+      dbSubnetGroupName: subnetGroup.ref,
+      enablePerformanceInsights: true,
+      engine: Rds.engine,
+      monitoringInterval: 60,
+      performanceInsightsRetentionPeriod: 7,
+      preferredMaintenanceWindow: instanceInfo.preferredMaintenanceWindow,
+      publiclyAccessible: false,
+      tags: [{ key: 'Name', value: this.createResourceName(scope, instanceInfo.resourceName) }]
+    });
+
+    return instance;
   }
 }

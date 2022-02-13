@@ -68,4 +68,38 @@ test('Rds', () => {
     VpcSecurityGroupIds: Match.anyValue(),
     Tags: Match.arrayWith([{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-rds-cluster` }])
   });
+
+  template.resourceCountIs('AWS::RDS::DBInstance', 2);
+  template.hasResourceProperties('AWS::RDS::DBInstance', {
+    DBInstanceClass: 'db.r5.large',
+    AutoMinorVersionUpgrade: false,
+    AvailabilityZone: 'ap-northeast-1a',
+    DBClusterIdentifier: Match.anyValue(),
+    DBInstanceIdentifier: `${serviceName}-${envType}-rds-instance-1a`,
+    DBParameterGroupName: Match.anyValue(),
+    DBSubnetGroupName: Match.anyValue(),
+    EnablePerformanceInsights: true,
+    Engine: 'aurora-mysql',
+    MonitoringInterval: 60,
+    PerformanceInsightsRetentionPeriod: 7,
+    PreferredMaintenanceWindow: 'Mon:19:00-Mon:19:30',
+    PubliclyAccessible: false,
+    Tags: Match.arrayWith([{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-rds-instance-1a` }])
+  });
+  template.hasResourceProperties('AWS::RDS::DBInstance', {
+    DBInstanceClass: 'db.r5.large',
+    AutoMinorVersionUpgrade: false,
+    AvailabilityZone: 'ap-northeast-1c',
+    DBClusterIdentifier: Match.anyValue(),
+    DBInstanceIdentifier: `${serviceName}-${envType}-rds-instance-1c`,
+    DBParameterGroupName: Match.anyValue(),
+    DBSubnetGroupName: Match.anyValue(),
+    EnablePerformanceInsights: true,
+    Engine: 'aurora-mysql',
+    MonitoringInterval: 60,
+    PerformanceInsightsRetentionPeriod: 7,
+    PreferredMaintenanceWindow: 'Mon:19:30-Mon:20:00',
+    PubliclyAccessible: false,
+    Tags: Match.arrayWith([{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-rds-instance-1c` }])
+  });
 });

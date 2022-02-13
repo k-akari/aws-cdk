@@ -4,6 +4,7 @@ import { Subnet } from '../resource/subnet';
 import { Rds } from '../resource/rds';
 import { SecurityGroup } from '../resource/security-group';
 import { SecretsManager } from '../resource/secrets-manager';
+import { IamRole } from '../resource/iam-role';
 
 export class DatabaseStack extends Stack {
   constructor(scope: Construct, id: string, subnet: Subnet, sg: SecurityGroup, ssm: SecretsManager, props?: StackProps) {
