@@ -4,6 +4,7 @@ import { NetworkStack } from './stack/network-stack';
 import { SecurityGroupStack } from './stack/security-group-stack';
 import { EcrStack } from './stack/ecr-stack';
 import { DatabaseStack } from './stack/database-stack';
+import { SecretsManagerStack } from './stack/secrets-manager-stack';
 
 export class MainStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -20,6 +21,10 @@ export class MainStack extends Stack {
     new EcrStack(scope, 'EcrStack', {
       stackName: 'ecr-stack'
     });
+
+    new SecretsManagerStack(scope, 'SecretsManagerStack', {
+      stackName: 'secrets-manager-stack'
+    })
 
     new DatabaseStack(scope, 'DatabaseStack', networkStack.subnet, {
       stackName: 'database-stack'
