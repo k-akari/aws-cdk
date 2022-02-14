@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`NetworkStackSnapshot 1`] = `
+exports[`ContainerStackSnapshot 1`] = `
 Object {
   "Parameters": Object {
     "BootstrapVersion": Object {
@@ -18,6 +18,36 @@ Object {
       },
       "Type": "AWS::ECR::Repository",
       "UpdateReplacePolicy": "Retain",
+    },
+    "EcsCluster97242B84": Object {
+      "Properties": Object {
+        "ClusterName": "service-test-ecs-cluster",
+        "ClusterSettings": Array [
+          Object {
+            "Name": "containerInsights",
+            "Value": "enabled",
+          },
+        ],
+      },
+      "Type": "AWS::ECS::Cluster",
+    },
+    "ServiceTaskDefinitionEFF764B2": Object {
+      "Properties": Object {
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
+          "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskRole8DFA0181Arn43EC6E0B",
+        },
+        "Family": "service-test-task-definition",
+        "Memory": "2048",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
+          "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskExecutionRoleC0B6A84DArnF61B3BFD",
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
     },
     "Web3C8945DB": Object {
       "DeletionPolicy": "Retain",

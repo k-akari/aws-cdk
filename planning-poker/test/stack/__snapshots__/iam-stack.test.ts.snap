@@ -10,7 +10,7 @@ Object {
     },
   },
   "Resources": Object {
-    "EcsServiceAutoScalingRole": Object {
+    "EcsServiceAutoScalingRole5DEB7109": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -49,7 +49,7 @@ Object {
       },
       "Type": "AWS::IAM::Policy",
     },
-    "EcsTaskExecutionRole": Object {
+    "EcsTaskExecutionRoleC0B6A84D": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -64,15 +64,48 @@ Object {
           "Version": "2012-10-17",
         },
         "ManagedPolicyArns": Array [
-          "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
-          "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
-          "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess",
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/CloudWatchAgentServerPolicy",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonSSMReadOnlyAccess",
+              ],
+            ],
+          },
         ],
         "RoleName": "service-test-ecs-task-execution-role",
       },
       "Type": "AWS::IAM::Role",
     },
-    "EcsTaskRole": Object {
+    "EcsTaskRole8DFA0181": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -80,17 +113,32 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": Array [
-                  "ecs-tasks.amazonaws.com",
-                  "events.amazonaws.com",
-                ],
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
         "ManagedPolicyArns": Array [
-          "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceEventsRole",
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonEC2ContainerServiceEventsRole",
+              ],
+            ],
+          },
         ],
         "RoleName": "service-test-ecs-task-role",
       },

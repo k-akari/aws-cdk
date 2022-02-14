@@ -26,27 +26,30 @@ test('IamRole', () => {
       }],
       Version: Match.anyValue()
     },
-    ManagedPolicyArns: [
-      'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy',
-      'arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy',
-      'arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess'
-    ],
+    ManagedPolicyArns: Match.anyValue(),
     RoleName: `${serviceName}-${envType}-ecs-task-execution-role`
   });
   template.hasResourceProperties('AWS::IAM::Role', {
     AssumeRolePolicyDocument: {
-      Statement: [{
-        Action: 'sts:AssumeRole',
-        Effect: 'Allow',
-        Principal: {
-          Service: Match.arrayWith(['ecs-tasks.amazonaws.com', 'events.amazonaws.com'])
+      Statement: [
+        {
+          Action: 'sts:AssumeRole',
+          Effect: 'Allow',
+          Principal: {
+            Service: 'ecs-tasks.amazonaws.com'
+          }
+        },
+        {
+          Action: 'sts:AssumeRole',
+          Effect: 'Allow',
+          Principal: {
+            Service: 'events.amazonaws.com'
+          }
         }
-      }],
+      ],
       Version: Match.anyValue()
     },
-    ManagedPolicyArns: [
-      'arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceEventsRole'
-    ],
+    ManagedPolicyArns: Match.anyValue(),
     RoleName: `${serviceName}-${envType}-ecs-task-role`
   });
   template.hasResourceProperties('AWS::IAM::Role', {

@@ -19,16 +19,16 @@ export class MainStack extends Stack {
       stackName: 'security-group-stack'
     });
 
-    new ContainerStack(scope, 'ContainerStack', networkStack.vpc, {
+    const iamStack = new IamStack(scope, 'IamStack', {
+      stackName: 'iam-stack'
+    });
+
+    new ContainerStack(scope, 'ContainerStack', networkStack.vpc, iamStack.iamRole, {
       stackName: 'container-stack'
     });
 
     const secretsManagerStack = new SecretsManagerStack(scope, 'SecretsManagerStack', {
       stackName: 'secrets-manager-stack'
-    });
-
-    const iamStack = new IamStack(scope, 'IamStack', {
-      stackName: 'iam-stack'
     });
 
     new DatabaseStack(scope, 'DatabaseStack', networkStack.subnet, securityGroupStack.sg, secretsManagerStack.ssm, {
