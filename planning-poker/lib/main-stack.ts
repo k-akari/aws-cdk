@@ -2,7 +2,7 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { NetworkStack } from './stack/network-stack';
 import { SecurityGroupStack } from './stack/security-group-stack';
-import { EcrStack } from './stack/ecr-stack';
+import { ContainerStack } from './stack/container-stack';
 import { DatabaseStack } from './stack/database-stack';
 import { SecretsManagerStack } from './stack/secrets-manager-stack';
 import { IamStack } from './stack/iam-stack';
@@ -19,8 +19,8 @@ export class MainStack extends Stack {
       stackName: 'security-group-stack'
     });
 
-    new EcrStack(scope, 'EcrStack', {
-      stackName: 'ecr-stack'
+    new ContainerStack(scope, 'ContainerStack', {
+      stackName: 'container-stack'
     });
 
     const secretsManagerStack = new SecretsManagerStack(scope, 'SecretsManagerStack', {

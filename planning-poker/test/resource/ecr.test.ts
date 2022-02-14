@@ -1,8 +1,8 @@
 import { App } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import * as Ecr from '../../lib/stack/ecr-stack';
+import * as Container from '../../lib/stack/container-stack';
 
-test('ElasticIp', () => {
+test('Ecr', () => {
   const serviceName = 'service';
   const envType = 'test';
   const app = new App({
@@ -11,8 +11,8 @@ test('ElasticIp', () => {
       'envType': envType
     }
   });
-  const stack = new Ecr.EcrStack(app, 'EcrStack');
-  const template = Template.fromStack(stack);
+  const containerStack = new Container.ContainerStack(app, 'ContainerStack');
+  const template = Template.fromStack(containerStack);
 
   template.resourceCountIs('AWS::ECR::Repository', 2);
   template.hasResourceProperties('AWS::ECR::Repository', {
