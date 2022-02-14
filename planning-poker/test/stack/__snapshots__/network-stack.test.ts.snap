@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Snapshot 1`] = `
+exports[`NetworkStackSnapshot 1`] = `
 Object {
   "Parameters": Object {
     "BootstrapVersion": Object {
@@ -234,7 +234,7 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::NetworkAcl",
@@ -248,7 +248,7 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::NetworkAcl",
@@ -298,7 +298,7 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::RouteTable",
@@ -312,7 +312,7 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::RouteTable",
@@ -326,7 +326,7 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::RouteTable",
@@ -342,7 +342,7 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::Subnet",
@@ -358,7 +358,7 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::Subnet",
@@ -374,7 +374,7 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::Subnet",
@@ -390,16 +390,17 @@ Object {
           },
         ],
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "Vpc": Object {
+    "Vpc8378EB38": Object {
       "Properties": Object {
         "CidrBlock": "10.0.0.0/16",
         "EnableDnsHostnames": true,
         "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
         "Tags": Array [
           Object {
             "Key": "Name",
@@ -415,7 +416,7 @@ Object {
           "Ref": "InternetGateway",
         },
         "VpcId": Object {
-          "Ref": "Vpc",
+          "Ref": "Vpc8378EB38",
         },
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",

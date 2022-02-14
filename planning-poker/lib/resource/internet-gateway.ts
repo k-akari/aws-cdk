@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import { CfnInternetGateway, CfnVPCGatewayAttachment, CfnVPC } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
-import { Vpc } from './vpc';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 export class InternetGateway extends Resource {
   public igw: CfnInternetGateway;
@@ -18,7 +18,7 @@ export class InternetGateway extends Resource {
     });
 
     new CfnVPCGatewayAttachment(scope, 'VpcGatewayAttachment', {
-      vpcId: this.vpc.vpc.ref,
+      vpcId: this.vpc.vpcId,
       internetGatewayId: this.igw.ref
     });
   }

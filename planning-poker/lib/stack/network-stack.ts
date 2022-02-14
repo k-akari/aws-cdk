@@ -1,7 +1,7 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { CfnVPC } from 'aws-cdk-lib/aws-ec2';
-import { Vpc } from '../resource/vpc';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { VPC } from '../resource/vpc';
 import { Subnet } from '../resource/subnet';
 import { InternetGateway } from '../resource/internet-gateway';
 import { ElasticIp } from '../resource/elastic-ip';
@@ -16,7 +16,8 @@ export class NetworkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
    
-    this.vpc = new Vpc(this);
+    const vpc = new VPC(this);
+    this.vpc = vpc.vpc;
     this.subnet = new Subnet(this, this.vpc);
     const internetGateway = new InternetGateway(this, this.vpc);
     const elasticIp = new ElasticIp(this);

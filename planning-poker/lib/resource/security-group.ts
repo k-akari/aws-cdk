@@ -1,6 +1,6 @@
 import { Construct } from 'constructs';
 import { CfnSecurityGroup, CfnSecurityGroupIngress, CfnSecurityGroupIngressProps } from 'aws-cdk-lib/aws-ec2';
-import { Vpc } from '../resource/vpc';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 
 interface IngressInfo {
@@ -109,7 +109,7 @@ export class SecurityGroup extends Resource {
     const securityGroup = new CfnSecurityGroup(scope, resourceInfo.id, {
       groupDescription: resourceInfo.groupDescription,
       groupName: resourceName,
-      vpcId: this.vpc.vpc.ref,
+      vpcId: this.vpc.vpcId,
       tags: [{
         key: 'Name',
         value: resourceName

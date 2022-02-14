@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import { CfnNetworkAcl, CfnNetworkAclEntry, CfnSubnetNetworkAclAssociation } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
-import { Vpc } from './vpc';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Subnet } from './subnet';
 
 interface AssociationInfo {
@@ -76,7 +76,7 @@ export class NetworkAcl extends Resource {
 
   private createNetworkAcl(scope: Construct, resourceInfo: ResourceInfo): CfnNetworkAcl {
     const networkAcl = new CfnNetworkAcl(scope, resourceInfo.id, {
-      vpcId: this.vpc.vpc.ref,
+      vpcId: this.vpc.vpcId,
       tags: [{
         key: 'Name',
         value: this.createResourceName(scope, resourceInfo.resourceName)

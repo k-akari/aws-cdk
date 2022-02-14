@@ -4,7 +4,7 @@ import { Resource } from './abstract/resource';
 import { Subnet } from './subnet';
 import { InternetGateway } from './internet-gateway';
 import { NatGateway } from './nat-gateway';
-import { Vpc } from './vpc';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 interface RouteInfo {
   readonly id: string;
@@ -103,7 +103,7 @@ export class RouteTable extends Resource {
 
   private createRouteTable(scope: Construct, resourceInfo: ResourceInfo): CfnRouteTable {
     const routeTable = new CfnRouteTable(scope, resourceInfo.id, {
-      vpcId: this.vpc.vpc.ref,
+      vpcId: this.vpc.vpcId,
       tags: [{
         key: 'Name',
         value: this.createResourceName(scope, resourceInfo.resourceName)

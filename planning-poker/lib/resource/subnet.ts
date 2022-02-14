@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import { CfnSubnet } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
-import { Vpc } from './vpc';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 interface ResourceInfo {
   readonly id: string;
@@ -63,7 +63,7 @@ export class Subnet extends Resource {
   private createSubnet(scope: Construct, resourceInfo: ResourceInfo): CfnSubnet {
     const subnet = new CfnSubnet(scope, resourceInfo.id, {
       cidrBlock: resourceInfo.cidrBlock,
-      vpcId: this.vpc.vpc.ref,
+      vpcId: this.vpc.vpcId,
       availabilityZone: resourceInfo.availabilityZone,
       tags: [{
         key: 'Name',

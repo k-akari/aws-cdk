@@ -17,13 +17,13 @@ test('NetworkAcl', () => {
   template.resourceCountIs('AWS::EC2::NetworkAcl', 2);
   template.hasResourceProperties('AWS::EC2::NetworkAcl', {
     VpcId: Match.objectLike({
-      Ref: 'Vpc'
+      Ref: Match.anyValue()
     }),
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-nacl-public` }]
   });
   template.hasResourceProperties('AWS::EC2::NetworkAcl', {
     VpcId: Match.objectLike({
-      Ref: 'Vpc'
+      Ref: Match.anyValue()
     }),
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-nacl-private` }]
   });
