@@ -1,5 +1,6 @@
 import { App } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
+import * as Network from '../../lib/stack/network-stack';
 import * as Container from '../../lib/stack/container-stack';
 
 test('Ecr', () => {
@@ -11,7 +12,8 @@ test('Ecr', () => {
       'envType': envType
     }
   });
-  const containerStack = new Container.ContainerStack(app, 'ContainerStack');
+  const networkStack = new Network.NetworkStack(app, 'NetworkStack');
+  const containerStack = new Container.ContainerStack(app, 'ContainerStack', networkStack.vpc);
   const template = Template.fromStack(containerStack);
 
   template.resourceCountIs('AWS::ECR::Repository', 2);

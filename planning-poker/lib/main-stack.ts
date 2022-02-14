@@ -19,7 +19,7 @@ export class MainStack extends Stack {
       stackName: 'security-group-stack'
     });
 
-    new ContainerStack(scope, 'ContainerStack', {
+    new ContainerStack(scope, 'ContainerStack', networkStack.vpc, {
       stackName: 'container-stack'
     });
 
