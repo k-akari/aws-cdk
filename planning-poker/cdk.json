@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/network.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/network-stack.ts",
   "versionReporting": false,
   "watch": {
     "include": [
