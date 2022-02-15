@@ -1,0 +1,31 @@
+name: CI for ec2-configuration
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ec2-configuration/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'ec2-configuration/**'
+
+defaults:
+  run:
+    working-directory: ec2-configuration
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
