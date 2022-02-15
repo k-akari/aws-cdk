@@ -26,9 +26,18 @@ test('Ecs', () => {
     ])
   });
 
-  template.resourceCountIs('AWS::ECS::TaskDefinition', 1);
+  template.resourceCountIs('AWS::ECS::TaskDefinition', 2);
   template.hasResourceProperties('AWS::ECS::TaskDefinition', {
-    Family: `${serviceName}-${envType}-task-definition`,
+    Family: `${serviceName}-${envType}-service`,
+    Cpu: '256',
+    Memory: '2048',
+    NetworkMode: 'awsvpc',
+    RequiresCompatibilities: Match.arrayWith(['FARGATE']),
+    TaskRoleArn: { 'Fn::ImportValue': Match.anyValue() },
+    ExecutionRoleArn: { 'Fn::ImportValue': Match.anyValue() }
+  });
+  template.hasResourceProperties('AWS::ECS::TaskDefinition', {
+    Family: `${serviceName}-${envType}-migration`,
     Cpu: '256',
     Memory: '2048',
     NetworkMode: 'awsvpc',
