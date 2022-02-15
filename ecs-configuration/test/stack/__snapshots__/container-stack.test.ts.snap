@@ -31,20 +31,79 @@ Object {
       },
       "Type": "AWS::ECS::Cluster",
     },
-    "ServiceTaskDefinitionEFF764B2": Object {
+    "MigrationTaskDefinitionE89B136E": Object {
       "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Command": Array [
+              "rails",
+              "db:migrate",
+            ],
+            "EntryPoint": Array [
+              "bundle",
+              "exec",
+            ],
+            "Essential": true,
+            "Image": "/aws/aws-example-app",
+            "Name": "container-migration-app",
+          },
+        ],
         "Cpu": "256",
         "ExecutionRoleArn": Object {
-          "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskRole8DFA0181Arn43EC6E0B",
+          "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskExecutionRoleC0B6A84DArnF61B3BFD",
         },
-        "Family": "service-test-task-definition",
+        "Family": "service-test-migration",
         "Memory": "2048",
         "NetworkMode": "awsvpc",
         "RequiresCompatibilities": Array [
           "FARGATE",
         ],
         "TaskRoleArn": Object {
+          "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskRole8DFA0181Arn43EC6E0B",
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "ServiceTaskDefinitionEFF764B2": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Essential": true,
+            "Image": "/aws/aws-example-app",
+            "Name": "container-service-app",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 80,
+                "HostPort": 80,
+                "Protocol": "tcp",
+              },
+            ],
+          },
+          Object {
+            "Essential": true,
+            "Image": "/aws/aws-example-app",
+            "Name": "container-service-web",
+            "PortMappings": Array [
+              Object {
+                "ContainerPort": 3000,
+                "HostPort": 3000,
+                "Protocol": "tcp",
+              },
+            ],
+          },
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
           "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskExecutionRoleC0B6A84DArnF61B3BFD",
+        },
+        "Family": "service-test-service",
+        "Memory": "2048",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
+          "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskRole8DFA0181Arn43EC6E0B",
         },
       },
       "Type": "AWS::ECS::TaskDefinition",
