@@ -1,0 +1,160 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SecurityGroupSnapshot 1`] = `
+Object {
+  "Parameters": Object {
+    "BootstrapVersion": Object {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": Object {
+    "SecurityGroupAlb": Object {
+      "Properties": Object {
+        "GroupDescription": "for ALB",
+        "GroupName": "service-test-sg-alb",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "service-test-sg-alb",
+          },
+        ],
+        "VpcId": Object {
+          "Fn::ImportValue": "NetworkStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "SecurityGroupEcs": Object {
+      "Properties": Object {
+        "GroupDescription": "for ECS",
+        "GroupName": "service-test-sg-ecs",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "service-test-sg-ecs",
+          },
+        ],
+        "VpcId": Object {
+          "Fn::ImportValue": "NetworkStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "SecurityGroupIngressAlb1": Object {
+      "Properties": Object {
+        "CidrIp": "0.0.0.0/0",
+        "FromPort": 80,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupAlb",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "SecurityGroupIngressAlb2": Object {
+      "Properties": Object {
+        "CidrIp": "0.0.0.0/0",
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupAlb",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "SecurityGroupIngressEcs1": Object {
+      "Properties": Object {
+        "FromPort": 80,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupEcs",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupAlb",
+            "GroupId",
+          ],
+        },
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "SecurityGroupIngressRds1": Object {
+      "Properties": Object {
+        "FromPort": 3306,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupRds",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupEcs",
+            "GroupId",
+          ],
+        },
+        "ToPort": 3306,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "SecurityGroupRds": Object {
+      "Properties": Object {
+        "GroupDescription": "for RDS",
+        "GroupName": "service-test-sg-rds",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "service-test-sg-rds",
+          },
+        ],
+        "VpcId": Object {
+          "Fn::ImportValue": "NetworkStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+  },
+  "Rules": Object {
+    "CheckBootstrapVersion": Object {
+      "Assertions": Array [
+        Object {
+          "Assert": Object {
+            "Fn::Not": Array [
+              Object {
+                "Fn::Contains": Array [
+                  Array [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  Object {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

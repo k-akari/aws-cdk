@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ContainerStackSnapshot 1`] = `
+Object {
+  "Parameters": Object {
+    "BootstrapVersion": Object {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": Object {
+    "AppF1B96344": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "ImageTagMutability": "IMMUTABLE",
+        "RepositoryName": "service-test-app",
+      },
+      "Type": "AWS::ECR::Repository",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "EcsCluster97242B84": Object {
+      "Properties": Object {
+        "ClusterName": "service-test-ecs-cluster",
+        "ClusterSettings": Array [
+          Object {
+            "Name": "containerInsights",
+            "Value": "enabled",
+          },
+        ],
+      },
+      "Type": "AWS::ECS::Cluster",
+    },
+    "ServiceTaskDefinitionEFF764B2": Object {
+      "Properties": Object {
+        "Cpu": "256",
+        "ExecutionRoleArn": Object {
+          "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskRole8DFA0181Arn43EC6E0B",
+        },
+        "Family": "service-test-task-definition",
+        "Memory": "2048",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
+          "Fn::ImportValue": "IamStack:ExportsOutputFnGetAttEcsTaskExecutionRoleC0B6A84DArnF61B3BFD",
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "Web3C8945DB": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "ImageTagMutability": "IMMUTABLE",
+        "RepositoryName": "service-test-web",
+      },
+      "Type": "AWS::ECR::Repository",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+  "Rules": Object {
+    "CheckBootstrapVersion": Object {
+      "Assertions": Array [
+        Object {
+          "Assert": Object {
+            "Fn::Not": Array [
+              Object {
+                "Fn::Contains": Array [
+                  Array [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  Object {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
