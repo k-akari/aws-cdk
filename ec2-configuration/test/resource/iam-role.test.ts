@@ -14,55 +14,19 @@ test('IamRole', () => {
   const stack = new Iam.IamStack(app, 'IamStack');
   const template = Template.fromStack(stack);
 
-  template.resourceCountIs('AWS::IAM::Role', 3);
+  template.resourceCountIs('AWS::IAM::Role', 1);
   template.hasResourceProperties('AWS::IAM::Role', {
     AssumeRolePolicyDocument: {
       Statement: [{
         Action: 'sts:AssumeRole',
         Effect: 'Allow',
         Principal: {
-          Service: 'ecs-tasks.amazonaws.com'
+          Service: { "Fn::Join": ["", ["ec2.", { "Ref": "AWS::URLSuffix" }]] }
         }
       }],
       Version: Match.anyValue()
     },
     ManagedPolicyArns: Match.anyValue(),
-    RoleName: `${serviceName}-${envType}-ecs-task-execution-role`
-  });
-  template.hasResourceProperties('AWS::IAM::Role', {
-    AssumeRolePolicyDocument: {
-      Statement: [
-        {
-          Action: 'sts:AssumeRole',
-          Effect: 'Allow',
-          Principal: {
-            Service: 'ecs-tasks.amazonaws.com'
-          }
-        },
-        {
-          Action: 'sts:AssumeRole',
-          Effect: 'Allow',
-          Principal: {
-            Service: 'events.amazonaws.com'
-          }
-        }
-      ],
-      Version: Match.anyValue()
-    },
-    ManagedPolicyArns: Match.anyValue(),
-    RoleName: `${serviceName}-${envType}-ecs-task-role`
-  });
-  template.hasResourceProperties('AWS::IAM::Role', {
-    AssumeRolePolicyDocument: {
-      Statement: [{
-        Action: 'sts:AssumeRole',
-        Effect: 'Allow',
-        Principal: {
-          Service: 'application-autoscaling.amazonaws.com'
-        }
-      }],
-      Version: Match.anyValue()
-    },
-    RoleName: `${serviceName}-${envType}-ecs-service-auto-scaling-role`
+    RoleName: `${serviceName}-${envType}-role-ec2`
   });
 });
