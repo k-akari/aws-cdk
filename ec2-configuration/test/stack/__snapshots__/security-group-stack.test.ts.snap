@@ -26,14 +26,14 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "SecurityGroupEcs": Object {
+    "SecurityGroupEc2": Object {
       "Properties": Object {
-        "GroupDescription": "for ECS",
-        "GroupName": "service-test-sg-ecs",
+        "GroupDescription": "for EC2",
+        "GroupName": "service-test-sg-ec2",
         "Tags": Array [
           Object {
             "Key": "Name",
-            "Value": "service-test-sg-ecs",
+            "Value": "service-test-sg-ec2",
           },
         ],
         "VpcId": Object {
@@ -72,12 +72,12 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "SecurityGroupIngressEcs1": Object {
+    "SecurityGroupIngressEc21": Object {
       "Properties": Object {
         "FromPort": 80,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "SecurityGroupEcs",
+            "SecurityGroupEc2",
             "GroupId",
           ],
         },
@@ -91,42 +91,6 @@ Object {
         "ToPort": 80,
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "SecurityGroupIngressRds1": Object {
-      "Properties": Object {
-        "FromPort": 3306,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
-            "SecurityGroupRds",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
-            "SecurityGroupEcs",
-            "GroupId",
-          ],
-        },
-        "ToPort": 3306,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "SecurityGroupRds": Object {
-      "Properties": Object {
-        "GroupDescription": "for RDS",
-        "GroupName": "service-test-sg-rds",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "service-test-sg-rds",
-          },
-        ],
-        "VpcId": Object {
-          "Fn::ImportValue": "NetworkStack:ExportsOutputRefVpc8378EB38272D6E3A",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
     },
   },
   "Rules": Object {

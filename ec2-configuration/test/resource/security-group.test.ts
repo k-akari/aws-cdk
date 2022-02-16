@@ -3,7 +3,7 @@ import { Template, Match } from 'aws-cdk-lib/assertions';
 import * as SecurityGroup from '../../lib/stack/security-group-stack';
 import * as Network from '../../lib/stack/network-stack';
 
-test('Subnet', () => {
+test('SecurityGroup', () => {
   const serviceName = 'service';
   const envType = 'test';
   const app = new App({
@@ -17,7 +17,7 @@ test('Subnet', () => {
   const securityGroupstack = new SecurityGroup.SecurityGroupStack(app, 'SecurityGroupStack', networkStack.vpc);
   const template = Template.fromStack(securityGroupstack);
 
-  template.resourceCountIs('AWS::EC2::SecurityGroup', 3);
+  template.resourceCountIs('AWS::EC2::SecurityGroup', 2);
   template.hasResourceProperties('AWS::EC2::SecurityGroup', {
     GroupDescription: 'for ALB',
     GroupName: `${serviceName}-${envType}-sg-alb`,
@@ -27,23 +27,15 @@ test('Subnet', () => {
     })
   });
   template.hasResourceProperties('AWS::EC2::SecurityGroup', {
-    GroupDescription: 'for ECS',
-    GroupName: `${serviceName}-${envType}-sg-ecs`,
-    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-sg-ecs` }],
-    VpcId: Match.objectLike({
-      'Fn::ImportValue': Match.anyValue()
-    })
-  });
-  template.hasResourceProperties('AWS::EC2::SecurityGroup', {
-    GroupDescription: 'for RDS',
-    GroupName: `${serviceName}-${envType}-sg-rds`,
-    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-sg-rds` }],
+    GroupDescription: 'for EC2',
+    GroupName: `${serviceName}-${envType}-sg-ec2`,
+    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-sg-ec2` }],
     VpcId: Match.objectLike({
       'Fn::ImportValue': Match.anyValue()
     })
   });
 
-  template.resourceCountIs('AWS::EC2::SecurityGroupIngress', 4);
+  template.resourceCountIs('AWS::EC2::SecurityGroupIngress', 3);
   template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
     IpProtocol: 'tcp',
     CidrIp: '0.0.0.0/0',
@@ -68,20 +60,8 @@ test('Subnet', () => {
     FromPort: 80,
     ToPort: 80,
     GroupId: Match.objectLike({
-      'Fn::GetAtt': Match.arrayWith(['SecurityGroupEcs', 'GroupId'])
+      'Fn::GetAtt': Match.arrayWith(['SecurityGroupEc2', 'GroupId'])
     }),
     SourceSecurityGroupId: Match.anyValue()
-  });
-  template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
-    IpProtocol: 'tcp',
-    CidrIp: Match.absent(),
-    FromPort: 3306,
-    ToPort: 3306,
-    GroupId: Match.objectLike({
-      'Fn::GetAtt': Match.arrayWith(['SecurityGroupRds', 'GroupId'])
-    }),
-    SourceSecurityGroupId: Match.objectLike({
-      'Fn::GetAtt': Match.arrayWith(['SecurityGroupEcs', 'GroupId'])
-    }),
   });
 });

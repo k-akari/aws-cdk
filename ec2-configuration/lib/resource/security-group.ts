@@ -20,8 +20,7 @@ interface ResourceInfo {
 
 export class SecurityGroup extends Resource {
   public alb: CfnSecurityGroup;
-  public ecs: CfnSecurityGroup;
-  public rds: CfnSecurityGroup;
+  public ec2: CfnSecurityGroup;
 
   private readonly vpc: Vpc;
   private readonly resources: ResourceInfo[] = [
@@ -54,40 +53,22 @@ export class SecurityGroup extends Resource {
       assign: securityGroup => this.alb = securityGroup
     },
     {
-      id: 'SecurityGroupEcs',
-      groupDescription: 'for ECS',
+      id: 'SecurityGroupEc2',
+      groupDescription: 'for EC2',
       ingresses: [
         {
-          id: 'SecurityGroupIngressEcs1',
+          id: 'SecurityGroupIngressEc21',
           securityGroupIngressProps: {
             ipProtocol: 'tcp',
             fromPort: 80,
             toPort: 80
           },
-          groupId: () => this.ecs.attrGroupId,
+          groupId: () => this.ec2.attrGroupId,
           sourceSecurityGroupId: () => this.alb.attrGroupId,
         }
       ],
-      resourceName: 'sg-ecs',
-      assign: securityGroup => this.ecs = securityGroup
-    },
-    {
-      id: 'SecurityGroupRds',
-      groupDescription: 'for RDS',
-      ingresses: [
-        {
-          id: 'SecurityGroupIngressRds1',
-          securityGroupIngressProps: {
-            ipProtocol: 'tcp',
-            fromPort: 3306,
-            toPort: 3306
-          },
-          groupId: () => this.rds.attrGroupId,
-          sourceSecurityGroupId: () => this.ecs.attrGroupId,
-        }
-      ],
-      resourceName: 'sg-rds',
-      assign: securityGroup => this.rds = securityGroup
+      resourceName: 'sg-ec2',
+      assign: securityGroup => this.ec2 = securityGroup
     }
   ];
 
