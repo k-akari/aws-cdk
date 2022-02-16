@@ -10,7 +10,7 @@ interface IngressInfo {
   readonly sourceSecurityGroupId?: () => string;
 }
 
-interface ResourceInfo {
+interface SecurityGroupInfo {
   readonly id: string;
   readonly groupDescription: string;
   readonly ingresses: IngressInfo[];
@@ -23,7 +23,7 @@ export class SecurityGroup extends Resource {
   public ec2: CfnSecurityGroup;
 
   private readonly vpc: Vpc;
-  private readonly resources: ResourceInfo[] = [
+  private readonly securityGroupInfos: SecurityGroupInfo[] = [
     {
       id: 'SecurityGroupAlb',
       groupDescription: 'for ALB',
@@ -77,31 +77,31 @@ export class SecurityGroup extends Resource {
 
     this.vpc = vpc;
 
-    for (const resourceInfo of this.resources) {
-      const securityGroup = this.createSecurityGroup(scope, resourceInfo);
-      resourceInfo.assign(securityGroup);
+    for (const securityGroupInfo of this.securityGroupInfos) {
+      const securityGroup = this.createSecurityGroup(scope, securityGroupInfo);
+      securityGroupInfo.assign(securityGroup);
 
-      this.createSecurityGroupIngress(scope, resourceInfo);
+      this.createSecurityGroupIngress(scope, securityGroupInfo);
     }
   };
 
-  private createSecurityGroup(scope: Construct, resourceInfo: ResourceInfo): CfnSecurityGroup {
-    const resourceName = this.createResourceName(scope, resourceInfo.resourceName);
-    const securityGroup = new CfnSecurityGroup(scope, resourceInfo.id, {
-      groupDescription: resourceInfo.groupDescription,
-      groupName: resourceName,
+  private createSecurityGroup(scope: Construct, securityGroupInfo: SecurityGroupInfo): CfnSecurityGroup {
+    const securityGroupName = this.createResourceName(scope, securityGroupInfo.resourceName);
+    const securityGroup = new CfnSecurityGroup(scope, securityGroupInfo.id, {
+      groupDescription: securityGroupInfo.groupDescription,
+      groupName: securityGroupName,
       vpcId: this.vpc.vpcId,
       tags: [{
         key: 'Name',
-        value: resourceName
+        value: securityGroupName
       }]
     });
 
     return securityGroup;
   }
 
-  private createSecurityGroupIngress(scope: Construct, resourceInfo: ResourceInfo) {
-    for (const ingress of resourceInfo.ingresses) {
+  private createSecurityGroupIngress(scope: Construct, securityGroupInfo: SecurityGroupInfo) {
+    for (const ingress of securityGroupInfo.ingresses) {
       const securityGroupIngress = new CfnSecurityGroupIngress(scope, ingress.id, ingress.securityGroupIngressProps);
       securityGroupIngress.groupId = ingress.groupId();
 
