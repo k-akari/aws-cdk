@@ -4,9 +4,9 @@ import { Resource } from './abstract/resource';
 import { Subnet } from './subnet';
 import { ElasticIp } from './elastic-ip';
 
-interface ResourceInfo {
+interface NatGatewayInfo {
   readonly id: string;
-  readonly resourceName: string;
+  readonly name: string;
   readonly allocationId: () => string;
   readonly subnetId: () => string;
   readonly assign: (natGateway: CfnNatGateway) => void;
@@ -14,24 +14,16 @@ interface ResourceInfo {
 
 export class NatGateway extends Resource {
   public ngw1a: CfnNatGateway;
-  public ngw1c: CfnNatGateway;
 
   private readonly subnet: Subnet;
   private readonly elasticIp: ElasticIp;
-  private readonly resources: ResourceInfo[] = [
+  private readonly natGatewayInfos: NatGatewayInfo[] = [
     {
       id: 'NatGateway1a',
-      resourceName: 'ngw-1a',
+      name: 'ngw-1a',
       allocationId: () => this.elasticIp.ngw1a.attrAllocationId,
       subnetId: () => this.subnet.public1a.ref,
       assign: natGateway => this.ngw1a = natGateway
-    },
-    {
-      id: 'NatGateway1c',
-      resourceName: 'ngw-1c',
-      allocationId: () => this.elasticIp.ngw1c.attrAllocationId,
-      subnetId: () => this.subnet.public1c.ref,
-      assign: natGateway => this.ngw1c = natGateway
     }
   ];
 
@@ -42,19 +34,19 @@ export class NatGateway extends Resource {
     this.subnet = subnet;
     this.elasticIp = elasticIp;
 
-    for (const resourceInfo of this.resources) {
-      const natGateway = this.createNatGateway(scope, resourceInfo);
-      resourceInfo.assign(natGateway);
+    for (const natGatewayInfo of this.natGatewayInfos) {
+      const natGateway = this.createNatGateway(scope, natGatewayInfo);
+      natGatewayInfo.assign(natGateway);
     }
   };
 
-  private createNatGateway(scope: Construct, resourceInfo: ResourceInfo): CfnNatGateway {
-    const natGateway = new CfnNatGateway(scope, resourceInfo.id, {
-      allocationId: resourceInfo.allocationId(),
-      subnetId: resourceInfo.subnetId(),
+  private createNatGateway(scope: Construct, natGatewayInfo: NatGatewayInfo): CfnNatGateway {
+    const natGateway = new CfnNatGateway(scope, natGatewayInfo.id, {
+      allocationId: natGatewayInfo.allocationId(),
+      subnetId: natGatewayInfo.subnetId(),
       tags: [{
         key: 'Name',
-        value: this.createResourceName(scope, resourceInfo.resourceName)
+        value: this.createResourceName(scope, natGatewayInfo.name)
       }]
     });
     return natGateway;

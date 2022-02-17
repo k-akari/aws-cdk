@@ -9,9 +9,9 @@ interface AssociationInfo {
   readonly subnetId: () => string;
 }
 
-interface ResourceInfo {
+interface NetworkAclInfo {
   readonly id: string;
-  readonly resourceName: string;
+  readonly name: string;
   readonly entryIdInbound: string;
   readonly entryIdOutbound: string;
   readonly associations: AssociationInfo[];
@@ -24,37 +24,29 @@ export class NetworkAcl extends Resource {
 
   private readonly vpc: Vpc;
   private readonly subnet: Subnet;
-  private readonly resources: ResourceInfo[] = [
+  private readonly networkAclInfos: NetworkAclInfo[] = [
     {
       id: 'NetworkAclPublic',
-      resourceName: 'nacl-public',
+      name: 'nacl-public',
       entryIdInbound: 'NetworkAclEntryInboundPublic',
       entryIdOutbound: 'NetworkAclEntryOutboundPublic',
       associations: [
         {
             id: 'NetworkAclAssociationPublic1a',
             subnetId: () => this.subnet.public1a.ref
-        },
-        {
-            id: 'NetworkAclAssociationPublic1c',
-            subnetId: () => this.subnet.public1c.ref
         }
       ],
       assign: networkAcl => this.public = networkAcl
     },
     {
       id: 'NetworkAclPrivate',
-      resourceName: 'nacl-private',
+      name: 'nacl-private',
       entryIdInbound: 'NetworkAclEntryInboundPrivate',
       entryIdOutbound: 'NetworkAclEntryOutboundPrivate',
       associations: [
         {
           id: 'NetworkAclAssociationPrivate1a',
           subnetId: () => this.subnet.private1a.ref
-        },
-        {
-          id: 'NetworkAclAssociationPrivate1c',
-          subnetId: () => this.subnet.private1c.ref
         }
       ],
       assign: networkAcl => this.private = networkAcl
@@ -68,23 +60,22 @@ export class NetworkAcl extends Resource {
     this.vpc = vpc;
     this.subnet = subnet;
 
-    for (const resourceInfo of this.resources) {
-      const networkAcl = this.createNetworkAcl(scope, resourceInfo);
-      resourceInfo.assign(networkAcl);
+    for (const networkAclInfo of this.networkAclInfos) {
+      const networkAcl = this.createNetworkAcl(scope, networkAclInfo);
+      networkAclInfo.assign(networkAcl);
     }
   }
 
-  private createNetworkAcl(scope: Construct, resourceInfo: ResourceInfo): CfnNetworkAcl {
-    const networkAcl = new CfnNetworkAcl(scope, resourceInfo.id, {
+  private createNetworkAcl(scope: Construct, networkAclInfo: NetworkAclInfo): CfnNetworkAcl {
+    const networkAcl = new CfnNetworkAcl(scope, networkAclInfo.id, {
       vpcId: this.vpc.vpcId,
       tags: [{
-        key: 'Name',
-        value: this.createResourceName(scope, resourceInfo.resourceName)
+        key: 'Name', value: this.createResourceName(scope, networkAclInfo.name)
       }]
     });
-    this.createEntry(scope, resourceInfo.entryIdInbound, networkAcl, false);
-    this.createEntry(scope, resourceInfo.entryIdOutbound, networkAcl, true);
-    for (const associationInfo of resourceInfo.associations) {
+    this.createEntry(scope, networkAclInfo.entryIdInbound, networkAcl, false);
+    this.createEntry(scope, networkAclInfo.entryIdOutbound, networkAcl, true);
+    for (const associationInfo of networkAclInfo.associations) {
       this.createAssociation(scope, associationInfo, networkAcl);
     }
     return networkAcl;

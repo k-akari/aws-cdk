@@ -2,41 +2,36 @@ import { Construct } from 'constructs';
 import { CfnEIP } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 
-interface ResourceInfo {
+interface ElasticIpInfo {
   readonly id: string;
-  readonly resourceName: string;
+  readonly name: string;
   readonly assign: (elasticIp: CfnEIP) => void;
 }
 
 export class ElasticIp extends Resource {
   public ngw1a: CfnEIP;
-  public ngw1c: CfnEIP;
-  private readonly resourcesInfo: ResourceInfo[] = [
+
+  private readonly elasticIpInfos: ElasticIpInfo[] = [
     {
       id: 'ElasticIpNgw1a',
-      resourceName: 'eip-ngw-1a',
+      name: 'eip-ngw-1a',
       assign: elasticIp => this.ngw1a = elasticIp
-    },
-    {
-      id: 'ElasticIpNgw1c',
-      resourceName: 'eip-ngw-1c',
-      assign: elasticIp => this.ngw1c = elasticIp
     }
   ];
 
   constructor(scope: Construct) {
     super();
 
-    for (const resourceInfo of this.resourcesInfo) {
-      const elasticIp = this.createElasticIp(scope, resourceInfo);
-      resourceInfo.assign(elasticIp);
+    for (const elasticIpInfo of this.elasticIpInfos) {
+      const elasticIp = this.createElasticIp(scope, elasticIpInfo);
+      elasticIpInfo.assign(elasticIp);
     }
   }
 
-  private createElasticIp(scope: Construct, resourceInfo: ResourceInfo): CfnEIP {
-    const elasticIp = new CfnEIP(scope, resourceInfo.id, {
+  private createElasticIp(scope: Construct, elasticIpInfo: ElasticIpInfo): CfnEIP {
+    const elasticIp = new CfnEIP(scope, elasticIpInfo.id, {
       domain: 'vpc',
-      tags: [{ key: 'Name', value: this.createResourceName(scope, resourceInfo.resourceName) }]
+      tags: [{ key: 'Name', value: this.createResourceName(scope, elasticIpInfo.name) }]
     });
     return elasticIp;
   }

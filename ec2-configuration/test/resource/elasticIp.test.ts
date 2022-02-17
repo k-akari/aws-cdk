@@ -14,13 +14,9 @@ test('ElasticIp', () => {
   const stack = new Network.NetworkStack(app, 'NetworkStack');
   const template = Template.fromStack(stack);
 
-  template.resourceCountIs('AWS::EC2::EIP', 2);
+  template.resourceCountIs('AWS::EC2::EIP', 1);
   template.hasResourceProperties('AWS::EC2::EIP', {
     Domain: 'vpc',
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-eip-ngw-1a` }]
   });
-  template.hasResourceProperties('AWS::EC2::EIP', {
-    Domain: 'vpc',
-    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-eip-ngw-1c` }]
-    });
 });

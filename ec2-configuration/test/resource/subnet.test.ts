@@ -14,7 +14,7 @@ test('Subnet', () => {
   const stack = new Network.NetworkStack(app, 'NetworkStack');
   const template = Template.fromStack(stack);
 
-  template.resourceCountIs('AWS::EC2::Subnet', 4);
+  template.resourceCountIs('AWS::EC2::Subnet', 2);
   template.hasResourceProperties('AWS::EC2::Subnet', {
     CidrBlock: '10.0.10.0/24',
     VpcId: Match.objectLike({ Ref: Match.anyValue() }),
@@ -22,21 +22,9 @@ test('Subnet', () => {
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-public-1a` }]
   });
   template.hasResourceProperties('AWS::EC2::Subnet', {
-    CidrBlock: '10.0.11.0/24',
-    VpcId: Match.objectLike({ Ref: Match.anyValue() }),
-    AvailabilityZone: 'ap-northeast-1c',
-    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-public-1c` }]
-  });
-  template.hasResourceProperties('AWS::EC2::Subnet', {
     CidrBlock: '10.0.100.0/24',
     VpcId: Match.objectLike({ Ref: Match.anyValue() }),
     AvailabilityZone: 'ap-northeast-1a',
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-private-1a` }]
-  });
-  template.hasResourceProperties('AWS::EC2::Subnet', {
-    CidrBlock: '10.0.101.0/24',
-    VpcId: Match.objectLike({ Ref: Match.anyValue() }),
-    AvailabilityZone: 'ap-northeast-1c',
-    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-subnet-private-1c` }]
   });
 });

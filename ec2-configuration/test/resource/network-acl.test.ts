@@ -49,7 +49,7 @@ test('NetworkAcl', () => {
     Egress: true
   });
 
-  template.resourceCountIs('AWS::EC2::SubnetNetworkAclAssociation', 4);
+  template.resourceCountIs('AWS::EC2::SubnetNetworkAclAssociation', 2);
   template.hasResourceProperties('AWS::EC2::SubnetNetworkAclAssociation', {
     NetworkAclId: Match.objectLike({
       Ref: 'NetworkAclPrivate'

@@ -18,9 +18,9 @@ interface AssociationInfo {
   readonly subnetId: () => string;
 }
 
-interface ResourceInfo {
+interface RouteTableInfo {
   readonly id: string;
-  readonly resourceName: string;
+  readonly name: string;
   readonly routes: RouteInfo[];
   readonly associations: AssociationInfo[];
   readonly assign: (routeTable: CfnRouteTable) => void;
@@ -35,10 +35,10 @@ export class RouteTable extends Resource {
   private readonly subnet: Subnet;
   private readonly internetGateway: InternetGateway;
   private readonly natGateway: NatGateway;
-  private readonly resources: ResourceInfo[] = [
+  private readonly routeTableInfos: RouteTableInfo[] = [
     {
       id: 'RouteTablePublic',
-      resourceName: 'rtb-public',
+      name: 'rtb-public',
       routes: [{
         id: 'RoutePublic',
         destinationCidrBlock: '0.0.0.0/0',
@@ -48,17 +48,13 @@ export class RouteTable extends Resource {
         {
           id: 'AssociationPublic1a',
           subnetId: () => this.subnet.public1a.ref
-        },
-        {
-          id: 'AssociationPublic1c',
-          subnetId: () => this.subnet.public1c.ref
         }
       ],
       assign: routeTable => this.public = routeTable
     },
     {
       id: 'RouteTablePrivate1a',
-      resourceName: 'rtb-private-1a',
+      name: 'rtb-private-1a',
       routes: [{
         id: 'RoutePrivate1a',
         destinationCidrBlock: '0.0.0.0/0',
@@ -69,20 +65,6 @@ export class RouteTable extends Resource {
         subnetId: () => this.subnet.private1a.ref
       }],
       assign: routeTable => this.private1a = routeTable
-    },
-    {
-      id: 'RouteTablePrivate1c',
-      resourceName: 'rtb-private-1c',
-      routes: [{
-        id: 'RoutePrivate1c',
-        destinationCidrBlock: '0.0.0.0/0',
-        natGatewayId: () => this.natGateway.ngw1c.ref
-      }],
-      associations: [{
-        id: 'AssociationPrivate1c',
-        subnetId: () => this.subnet.private1c.ref
-      }],
-      assign: routeTable => this.private1c = routeTable
     }
   ];
 
@@ -95,26 +77,25 @@ export class RouteTable extends Resource {
     this.internetGateway = internetGateway;
     this.natGateway = natGateway;
 
-    for (const resourceInfo of this.resources) {
-      const routeTable = this.createRouteTable(scope, resourceInfo);
-      resourceInfo.assign(routeTable);
+    for (const routeTableInfo of this.routeTableInfos) {
+      const routeTable = this.createRouteTable(scope, routeTableInfo);
+      routeTableInfo.assign(routeTable);
     }
   }
 
-  private createRouteTable(scope: Construct, resourceInfo: ResourceInfo): CfnRouteTable {
-    const routeTable = new CfnRouteTable(scope, resourceInfo.id, {
+  private createRouteTable(scope: Construct, routeTableInfo: RouteTableInfo): CfnRouteTable {
+    const routeTable = new CfnRouteTable(scope, routeTableInfo.id, {
       vpcId: this.vpc.vpcId,
       tags: [{
-        key: 'Name',
-        value: this.createResourceName(scope, resourceInfo.resourceName)
+        key: 'Name', value: this.createResourceName(scope, routeTableInfo.name)
       }]
     });
 
-    for (const routeInfo of resourceInfo.routes) {
+    for (const routeInfo of routeTableInfo.routes) {
       this.createRoute(scope, routeInfo, routeTable);
     }
 
-    for (const associationInfo of resourceInfo.associations) {
+    for (const associationInfo of routeTableInfo.associations) {
       this.createAssociation(scope, associationInfo, routeTable);
     }
 
