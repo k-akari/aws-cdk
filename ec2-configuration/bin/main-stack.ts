@@ -1,21 +1,16 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { MainStack } from '../lib/main-stack';
+import { NetworkStack } from '../lib/stack/network-stack';
+import { IamStack } from '../lib/stack/iam-stack';
+import { SecurityGroupStack } from '../lib/stack/security-group-stack';
+import { ServerStack } from '../lib/stack/server-stack';
+import { LoadBalancerStack } from '../lib/stack/load-balancer-stack';
 
 const app = new cdk.App();
-new MainStack(app, 'MainStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
-
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+const networkStack = new NetworkStack(app, 'NetworkStack');
+const iamStack = new IamStack(app, 'IamStack');
+const securityGroupStack = new SecurityGroupStack(app, 'SecurityGroupStack', networkStack.vpc);
+const serverStack = new ServerStack(app, 'ServerStack', networkStack.subnet.private1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2);
+new LoadBalancerStack(app, 'LoadBalancerStack', networkStack.vpc, networkStack.subnet.private1a, securityGroupStack.sg.ec2, serverStack.ec2.mainInstance);
