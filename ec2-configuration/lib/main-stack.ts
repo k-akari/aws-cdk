@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import { NetworkStack } from './stack/network-stack';
 import { SecurityGroupStack } from './stack/security-group-stack';
 import { IamStack } from './stack/iam-stack';
+import { ServerStack } from './stack/server-stack';
 
 export class MainStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -18,6 +19,10 @@ export class MainStack extends Stack {
 
     const iamStack = new IamStack(scope, 'IamStack', {
       stackName: 'iam-stack'
+    });
+
+    new ServerStack(scope, 'ServerStack', networkStack.subnet.private1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2, {
+      stackName: 'server-stack'
     });
   }
 }

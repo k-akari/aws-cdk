@@ -10,6 +10,17 @@ Object {
     },
   },
   "Resources": Object {
+    "InstanceProfile": Object {
+      "Properties": Object {
+        "InstanceProfileName": "service-test-role-ec2",
+        "Roles": Array [
+          Object {
+            "Ref": "RoleEc2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
     "RoleEc2": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {

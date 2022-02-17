@@ -29,4 +29,10 @@ test('IamRole', () => {
     ManagedPolicyArns: Match.anyValue(),
     RoleName: `${serviceName}-${envType}-role-ec2`
   });
+
+  template.resourceCountIs('AWS::IAM::InstanceProfile', 1);
+  template.hasResourceProperties('AWS::IAM::InstanceProfile', {
+    Roles: Match.arrayWith([{ 'Ref': 'RoleEc2' }]),
+    InstanceProfileName: `${serviceName}-${envType}-role-ec2`
+  });
 });
