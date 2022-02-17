@@ -5,9 +5,11 @@ import { CfnInstanceProfile } from 'aws-cdk-lib/aws-iam';
 import { Ec2 } from '../resource/ec2';
 
 export class ServerStack extends Stack {
+  public readonly ec2: Ec2
+
   constructor(scope: Construct, id: string, subnet: CfnSubnet, instanceProfile: CfnInstanceProfile, securityGroup: CfnSecurityGroup, props?: StackProps) {
     super(scope, id, props);
 
-    new Ec2(this, subnet, instanceProfile, securityGroup);
+    this.ec2 = new Ec2(this, subnet, instanceProfile, securityGroup);
   }
 }

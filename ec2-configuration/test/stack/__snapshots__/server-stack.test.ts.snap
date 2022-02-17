@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServerStackSnapshot 1`] = `
+Object {
+  "Parameters": Object {
+    "BootstrapVersion": Object {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": Object {
+    "Ec2Instance1a": Object {
+      "Properties": Object {
+        "AvailabilityZone": "ap-northeast-1a",
+        "IamInstanceProfile": Object {
+          "Fn::ImportValue": "IamStack:ExportsOutputRefInstanceProfileB20CF27C",
+        },
+        "ImageId": "ami-06631ebafb3ae5d34",
+        "InstanceType": "t2.micro",
+        "SecurityGroupIds": Array [
+          Object {
+            "Fn::ImportValue": "SecurityGroupStack:ExportsOutputFnGetAttSecurityGroupEc2GroupId103D9309",
+          },
+        ],
+        "SubnetId": Object {
+          "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPrivate1aAFF32B55",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "service-test-ec2-1a",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::Instance",
+    },
+  },
+  "Rules": Object {
+    "CheckBootstrapVersion": Object {
+      "Assertions": Array [
+        Object {
+          "Assert": Object {
+            "Fn::Not": Array [
+              Object {
+                "Fn::Contains": Array [
+                  Array [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  Object {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
