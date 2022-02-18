@@ -26,7 +26,7 @@ export class MainStack extends Stack {
       stackName: 'server-stack'
     });
 
-    new LoadBalancerStack(scope, 'LoadBalancerStack', networkStack.vpc, networkStack.subnet.private1a, securityGroupStack.sg.alb, serverStack.ec2.mainInstance, {
+    new LoadBalancerStack(scope, 'LoadBalancerStack', networkStack.vpc, networkStack.subnet, securityGroupStack.sg.alb, serverStack.ec2.mainInstance, {
       stackName: 'load-balancer-stack'
     });
   }

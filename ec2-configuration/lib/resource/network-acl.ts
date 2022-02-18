@@ -32,8 +32,12 @@ export class NetworkAcl extends Resource {
       entryIdOutbound: 'NetworkAclEntryOutboundPublic',
       associations: [
         {
-            id: 'NetworkAclAssociationPublic1a',
-            subnetId: () => this.subnet.public1a.ref
+          id: 'NetworkAclAssociationPublic1a',
+          subnetId: () => this.subnet.public1a.ref
+        },
+        {
+          id: 'NetworkAclAssociationPublic1c',
+          subnetId: () => this.subnet.public1c.ref
         }
       ],
       assign: networkAcl => this.public = networkAcl

@@ -24,6 +24,9 @@ Object {
           Object {
             "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPrivate1aAFF32B55",
           },
+          Object {
+            "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPublic1c785C7D25",
+          },
         ],
         "Type": "application",
       },

@@ -13,4 +13,4 @@ const networkStack = new NetworkStack(app, 'NetworkStack');
 const iamStack = new IamStack(app, 'IamStack');
 const securityGroupStack = new SecurityGroupStack(app, 'SecurityGroupStack', networkStack.vpc);
 const serverStack = new ServerStack(app, 'ServerStack', networkStack.subnet.private1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2);
-new LoadBalancerStack(app, 'LoadBalancerStack', networkStack.vpc, networkStack.subnet.private1a, securityGroupStack.sg.ec2, serverStack.ec2.mainInstance);
+new LoadBalancerStack(app, 'LoadBalancerStack', networkStack.vpc, networkStack.subnet, securityGroupStack.sg.ec2, serverStack.ec2.mainInstance);

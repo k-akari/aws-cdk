@@ -36,5 +36,5 @@ test('RouteTable', () => {
     NatGatewayId: Match.objectLike({ Ref: 'NatGateway1a' }),
   });
 
-  template.resourceCountIs('AWS::EC2::SubnetRouteTableAssociation', 2);
+  template.resourceCountIs('AWS::EC2::SubnetRouteTableAssociation', 3);
 });

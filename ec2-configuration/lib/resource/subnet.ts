@@ -13,6 +13,7 @@ interface SubnetInfo {
 
 export class Subnet extends Resource {
   public public1a: CfnSubnet;
+  public public1c: CfnSubnet;
   public private1a: CfnSubnet;
 
   private readonly vpc: Vpc;
@@ -23,6 +24,13 @@ export class Subnet extends Resource {
       availabilityZone: 'ap-northeast-1a',
       name: 'subnet-public-1a',
       assign: subnet => (this.public1a as CfnSubnet) = subnet
+    },
+    {
+      id: 'SubnetPublic1c',
+      cidrBlock: '10.0.11.0/24',
+      availabilityZone: 'ap-northeast-1c',
+      name: 'subnet-public-1c',
+      assign: subnet => (this.public1c as CfnSubnet) = subnet
     },
     {
       id: 'SubnetPrivate1a',

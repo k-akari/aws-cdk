@@ -20,7 +20,7 @@ test('ServerStackSnapshot', () => {
   const iamStack = new Iam.IamStack(app, 'IamStack');
   const securityGroupStack = new SecurityGroup.SecurityGroupStack(app, 'SecurityGroupStack', networkStack.vpc);
   const serverStack = new Server.ServerStack(app, 'ServerStack', networkStack.subnet.private1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2);
-  const loadBalancerStack = new LoadBalancer.LoadBalancerStack(app, 'LoadBalancerStack', networkStack.vpc, networkStack.subnet.private1a, securityGroupStack.sg.ec2, serverStack.ec2.mainInstance);
+  const loadBalancerStack = new LoadBalancer.LoadBalancerStack(app, 'LoadBalancerStack', networkStack.vpc, networkStack.subnet, securityGroupStack.sg.ec2, serverStack.ec2.mainInstance);
   const template = Template.fromStack(loadBalancerStack);
 
   expect(template).toMatchSnapshot();

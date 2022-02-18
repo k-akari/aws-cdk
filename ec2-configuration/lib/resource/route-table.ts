@@ -48,6 +48,10 @@ export class RouteTable extends Resource {
         {
           id: 'AssociationPublic1a',
           subnetId: () => this.subnet.public1a.ref
+        },
+        {
+          id: 'AssociationPublic1c',
+          subnetId: () => this.subnet.public1c.ref
         }
       ],
       assign: routeTable => this.public = routeTable

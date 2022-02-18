@@ -1,15 +1,16 @@
 import { Construct } from 'constructs';
 import { CfnLoadBalancer, CfnTargetGroup, CfnListener } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Resource } from './abstract/resource';
-import { Vpc, CfnSubnet, CfnInstance, CfnSecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { Vpc, CfnInstance, CfnSecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { Subnet } from './subnet';
 
 export class Elb extends Resource {
   private readonly vpc: Vpc;
-  private readonly subnet: CfnSubnet;
+  private readonly subnet: Subnet;
   private readonly securityGroup: CfnSecurityGroup;
   private readonly ec2: CfnInstance;
 
-  constructor(scope: Construct, vpc: Vpc, subnet: CfnSubnet, sg: CfnSecurityGroup, ec2: CfnInstance) {
+  constructor(scope: Construct, vpc: Vpc, subnet: Subnet, sg: CfnSecurityGroup, ec2: CfnInstance) {
     super();
   
     this.vpc = vpc;
@@ -28,7 +29,7 @@ export class Elb extends Resource {
       name: this.createResourceName(scope, 'alb'),
       scheme: 'internet-facing',
       securityGroups: [this.securityGroup.attrGroupId],
-      subnets: [this.subnet.ref],
+      subnets: [this.subnet.private1a.ref, this.subnet.public1c.ref],
       type: 'application'
     });
 

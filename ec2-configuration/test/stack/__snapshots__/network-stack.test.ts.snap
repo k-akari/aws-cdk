@@ -32,6 +32,17 @@ Object {
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
+    "AssociationPublic1c": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "RouteTablePublic",
+        },
+        "SubnetId": Object {
+          "Ref": "SubnetPublic1c",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
     "ElasticIpNgw1a": Object {
       "Properties": Object {
         "Domain": "vpc",
@@ -93,6 +104,17 @@ Object {
         },
         "SubnetId": Object {
           "Ref": "SubnetPublic1a",
+        },
+      },
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+    },
+    "NetworkAclAssociationPublic1c": Object {
+      "Properties": Object {
+        "NetworkAclId": Object {
+          "Ref": "NetworkAclPublic",
+        },
+        "SubnetId": Object {
+          "Ref": "SubnetPublic1c",
         },
       },
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
@@ -253,6 +275,22 @@ Object {
           Object {
             "Key": "Name",
             "Value": "service-test-subnet-public-1a",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "SubnetPublic1c": Object {
+      "Properties": Object {
+        "AvailabilityZone": "ap-northeast-1c",
+        "CidrBlock": "10.0.11.0/24",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "service-test-subnet-public-1c",
           },
         ],
         "VpcId": Object {
