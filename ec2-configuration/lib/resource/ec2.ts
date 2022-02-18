@@ -6,7 +6,7 @@ import { Resource } from './abstract/resource';
 interface Ec2InstanceInfo {
   readonly id: string;
   readonly availabilityZone: string;
-  readonly resourceName: string;
+  readonly name: string;
   readonly ami: string;
   readonly instanceType: string;
   readonly subnetId: () => string;
@@ -26,7 +26,7 @@ export class Ec2 extends Resource {
     {
       id: 'Ec2Instance1a',
       availabilityZone: 'ap-northeast-1a',
-      resourceName: 'ec2-1a',
+      name: 'ec2-1a',
       ami: Ec2.latestImageIdAmazonLinux2,
       instanceType: Ec2.instanceType,
       subnetId: () => this.subnet.ref,
@@ -56,7 +56,7 @@ export class Ec2 extends Resource {
       securityGroupIds: [this.securityGroup.attrGroupId],
       subnetId: ec2InstanceInfo.subnetId(),
       tags: [{
-        key: 'Name', value: this.createResourceName(scope, ec2InstanceInfo.resourceName)
+        key: 'Name', value: this.createResourceName(scope, ec2InstanceInfo.name)
       }]
     });
 
