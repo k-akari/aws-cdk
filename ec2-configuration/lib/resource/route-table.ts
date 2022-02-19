@@ -1,8 +1,7 @@
 import { Construct } from 'constructs';
-import { CfnRouteTable, CfnRoute, CfnSubnetRouteTableAssociation } from 'aws-cdk-lib/aws-ec2';
+import { CfnRouteTable, CfnRoute, CfnSubnetRouteTableAssociation, CfnInternetGateway } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 import { Subnet } from './subnet';
-import { InternetGateway } from './internet-gateway';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 export class RouteTable extends Resource {
@@ -10,15 +9,15 @@ export class RouteTable extends Resource {
 
   private readonly vpc: Vpc;
   private readonly subnet: Subnet;
-  private readonly internetGateway: InternetGateway;
+  private readonly igw: CfnInternetGateway;
 
-  constructor(scope: Construct, vpc: Vpc, subnet: Subnet, internetGateway: InternetGateway)
+  constructor(scope: Construct, vpc: Vpc, subnet: Subnet, igw: CfnInternetGateway)
   {
     super();
 
     this.vpc = vpc;
     this.subnet = subnet;
-    this.internetGateway = internetGateway;
+    this.igw = igw;
 
     // Create a Route Table
     const routeTable = new CfnRouteTable(scope, 'RouteTablePublic', {
@@ -30,7 +29,7 @@ export class RouteTable extends Resource {
     new CfnRoute(scope, 'RoutePublic', {
       routeTableId: routeTable.ref,
       destinationCidrBlock: '0.0.0.0/0',
-      gatewayId: this.internetGateway.igw.ref
+      gatewayId: this.igw.ref
     });
 
     // Associate the Route Table with Public Subnets

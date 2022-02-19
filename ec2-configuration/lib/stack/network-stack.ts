@@ -18,7 +18,7 @@ export class NetworkStack extends Stack {
     this.vpc = vpc.vpc;
     this.subnet = new Subnet(this, this.vpc);
     const internetGateway = new InternetGateway(this, this.vpc);
-    new RouteTable(this, this.vpc, this.subnet, internetGateway);
+    new RouteTable(this, this.vpc, this.subnet, internetGateway.igw);
     new NetworkAcl(this, this.vpc, this.subnet);
   }
 }
