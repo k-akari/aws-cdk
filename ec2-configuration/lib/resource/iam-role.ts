@@ -3,18 +3,11 @@ import { CfnRole, ServicePrincipal, Effect, PolicyStatement, PolicyDocument, Cfn
 import { Resource } from './abstract/resource';
 
 export class IamRole extends Resource {
-  public ec2: CfnRole;
-  public github: CfnRole;
-  public instanceProfile: CfnInstanceProfile
-
-  constructor(scope: Construct) {
+  constructor() {
     super();
-
-    [this.ec2, this.instanceProfile] = this.createEc2Role(scope);
-    this.github = this.createGithubRole(scope);
   }
 
-  private createEc2Role(scope: Construct): [CfnRole, CfnInstanceProfile] {
+  public createEc2InstanceProfile(scope: Construct): CfnInstanceProfile {
     // Define a Policy Document
     const policyStatement = new PolicyStatement({
       effect: Effect.ALLOW,
@@ -35,10 +28,10 @@ export class IamRole extends Resource {
       instanceProfileName: iamRole.roleName
     });
 
-    return [iamRole, instanceProfile];
+    return instanceProfile;
   }
 
-  private createGithubRole(scope: Construct): CfnRole {
+  public createGithubRole(scope: Construct): CfnRole {
     // Create an OIDC Provider
     const oidcProvider = new OpenIdConnectProvider(scope, 'OIDCProvider', {
       url: 'https://vstoken.actions.githubusercontent.com',

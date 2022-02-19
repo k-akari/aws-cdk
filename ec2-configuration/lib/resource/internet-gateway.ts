@@ -1,16 +1,12 @@
 import { Construct } from 'constructs';
-import { CfnInternetGateway, CfnVPCGatewayAttachment } from 'aws-cdk-lib/aws-ec2';
+import { CfnInternetGateway, CfnVPCGatewayAttachment, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
-import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 export class InternetGateway extends Resource {
   public igw: CfnInternetGateway;
-  private readonly vpc: Vpc;
 
   constructor(scope: Construct, vpc: Vpc) {
     super();
-  
-    this.vpc = vpc;
 
     // Create Internet Gateway
     this.igw = new CfnInternetGateway(scope, 'InternetGateway', {
@@ -19,7 +15,7 @@ export class InternetGateway extends Resource {
 
     // Attach the Internet Gateway to the VPC
     new CfnVPCGatewayAttachment(scope, 'VpcGatewayAttachment', {
-      vpcId: this.vpc.vpcId,
+      vpcId: vpc.vpcId,
       internetGatewayId: this.igw.ref
     });
   }

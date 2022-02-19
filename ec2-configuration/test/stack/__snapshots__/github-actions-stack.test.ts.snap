@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`IamStackSnapshot 1`] = `
+exports[`GithubActionsSnapshot 1`] = `
 Object {
   "Parameters": Object {
     "BootstrapVersion": Object {
@@ -77,17 +77,6 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "InstanceProfile": Object {
-      "Properties": Object {
-        "InstanceProfileName": "service-test-role-ec2",
-        "Roles": Array [
-          Object {
-            "Ref": "RoleEc2",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::InstanceProfile",
-    },
     "OIDCProviderA3376E13": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -107,37 +96,6 @@ Object {
       },
       "Type": "Custom::AWSCDKOpenIdConnectProvider",
       "UpdateReplacePolicy": "Delete",
-    },
-    "RoleEc2": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "ec2.",
-                      Object {
-                        "Ref": "AWS::URLSuffix",
-                      },
-                    ],
-                  ],
-                },
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-        ],
-        "RoleName": "service-test-role-ec2",
-      },
-      "Type": "AWS::IAM::Role",
     },
     "RoleGithub": Object {
       "Properties": Object {

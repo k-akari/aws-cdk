@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ServerStackSnapshot 1`] = `
+exports[`ServerStack 1`] = `
 Object {
   "Parameters": Object {
     "BootstrapVersion": Object {
@@ -10,6 +10,75 @@ Object {
     },
   },
   "Resources": Object {
+    "Alb": Object {
+      "Properties": Object {
+        "IpAddressType": "ipv4",
+        "Name": "service-test-alb",
+        "Scheme": "internet-facing",
+        "SecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "SecurityGroupAlb",
+              "GroupId",
+            ],
+          },
+        ],
+        "Subnets": Array [
+          Object {
+            "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPublic1a52A57DE6",
+          },
+          Object {
+            "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPublic1c785C7D25",
+          },
+        ],
+        "Type": "application",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    },
+    "AlbListener": Object {
+      "Properties": Object {
+        "DefaultActions": Array [
+          Object {
+            "ForwardConfig": Object {
+              "TargetGroups": Array [
+                Object {
+                  "TargetGroupArn": Object {
+                    "Ref": "AlbTargetGroup",
+                  },
+                  "Weight": 1,
+                },
+              ],
+            },
+            "Type": "forward",
+          },
+        ],
+        "LoadBalancerArn": Object {
+          "Ref": "Alb",
+        },
+        "Port": 80,
+        "Protocol": "HTTP",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+    },
+    "AlbTargetGroup": Object {
+      "Properties": Object {
+        "Name": "service-test-tg",
+        "Port": 80,
+        "Protocol": "HTTP",
+        "TargetType": "instance",
+        "Targets": Array [
+          Object {
+            "Id": Object {
+              "Ref": "Ec2Instance1a",
+            },
+          },
+        ],
+        "VpcId": Object {
+          "Fn::ImportValue": "NetworkStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+    },
     "Ec2Association": Object {
       "Properties": Object {
         "EIP": Object {
@@ -25,13 +94,16 @@ Object {
       "Properties": Object {
         "AvailabilityZone": "ap-northeast-1a",
         "IamInstanceProfile": Object {
-          "Fn::ImportValue": "IamStack:ExportsOutputRefInstanceProfileB20CF27C",
+          "Ref": "InstanceProfile",
         },
         "ImageId": "ami-08a8688fb7eacb171",
         "InstanceType": "t3.small",
         "SecurityGroupIds": Array [
           Object {
-            "Fn::ImportValue": "SecurityGroupStack:ExportsOutputFnGetAttSecurityGroupEc2GroupId103D9309",
+            "Fn::GetAtt": Array [
+              "SecurityGroupEc2",
+              "GroupId",
+            ],
           },
         ],
         "SubnetId": Object {
@@ -57,6 +129,145 @@ Object {
         ],
       },
       "Type": "AWS::EC2::EIP",
+    },
+    "InstanceProfile": Object {
+      "Properties": Object {
+        "InstanceProfileName": "service-test-role-ec2",
+        "Roles": Array [
+          Object {
+            "Ref": "RoleEc2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "RoleEc2": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "ec2.",
+                      Object {
+                        "Ref": "AWS::URLSuffix",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+        ],
+        "RoleName": "service-test-role-ec2",
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SecurityGroupAlb": Object {
+      "Properties": Object {
+        "GroupDescription": "for ALB",
+        "GroupName": "service-test-sg-alb",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "service-test-sg-alb",
+          },
+        ],
+        "VpcId": Object {
+          "Fn::ImportValue": "NetworkStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "SecurityGroupEc2": Object {
+      "Properties": Object {
+        "GroupDescription": "for EC2",
+        "GroupName": "service-test-sg-ec2",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "service-test-sg-ec2",
+          },
+        ],
+        "VpcId": Object {
+          "Fn::ImportValue": "NetworkStack:ExportsOutputRefVpc8378EB38272D6E3A",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "SecurityGroupEgressEc21": Object {
+      "Properties": Object {
+        "CidrIp": "0.0.0.0/0",
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupEc2",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "SecurityGroupIngressAlb1": Object {
+      "Properties": Object {
+        "CidrIp": "0.0.0.0/0",
+        "FromPort": 80,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupAlb",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "SecurityGroupIngressAlb2": Object {
+      "Properties": Object {
+        "CidrIp": "0.0.0.0/0",
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupAlb",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "SecurityGroupIngressEc21": Object {
+      "Properties": Object {
+        "FromPort": 80,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupEc2",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupAlb",
+            "GroupId",
+          ],
+        },
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
     },
   },
   "Rules": Object {

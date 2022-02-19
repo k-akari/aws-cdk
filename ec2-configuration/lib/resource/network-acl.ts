@@ -1,7 +1,6 @@
 import { Construct } from 'constructs';
-import { CfnNetworkAcl, CfnNetworkAclEntry, CfnSubnetNetworkAclAssociation } from 'aws-cdk-lib/aws-ec2';
+import { Vpc, CfnNetworkAcl, CfnNetworkAclEntry, CfnSubnetNetworkAclAssociation } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
-import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Subnet } from './subnet';
 
 export class NetworkAcl extends Resource {

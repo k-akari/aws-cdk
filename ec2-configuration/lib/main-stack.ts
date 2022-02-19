@@ -1,10 +1,8 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { NetworkStack } from './stack/network-stack';
-import { SecurityGroupStack } from './stack/security-group-stack';
-import { IamStack } from './stack/iam-stack';
 import { ServerStack } from './stack/server-stack';
-import { LoadBalancerStack } from './stack/load-balancer-stack';
+import { GithubActionsStack } from './stack/github-actions-stack';
 
 export class MainStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -14,20 +12,12 @@ export class MainStack extends Stack {
       stackName: 'network-stack'
     });
 
-    const securityGroupStack = new SecurityGroupStack(scope, 'SecurityGroupStack', networkStack.vpc, {
-      stackName: 'security-group-stack'
-    });
-
-    const iamStack = new IamStack(scope, 'IamStack', {
-      stackName: 'iam-stack'
-    });
-
-    const serverStack = new ServerStack(scope, 'ServerStack', networkStack.subnet.public1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2, {
+    new ServerStack(scope, 'ServerStack', networkStack.vpc, networkStack.subnet, {
       stackName: 'server-stack'
     });
 
-    new LoadBalancerStack(scope, 'LoadBalancerStack', networkStack.vpc, networkStack.subnet, securityGroupStack.sg.alb, serverStack.ec2.mainInstance, {
-      stackName: 'load-balancer-stack'
+    new GithubActionsStack(scope, 'GithubActionsStack', {
+      stackName: 'github-actions-stack'
     });
   }
 }

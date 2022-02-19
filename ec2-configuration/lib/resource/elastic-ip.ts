@@ -3,7 +3,9 @@ import { CfnEIP, CfnInstance, CfnEIPAssociation } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 
 export class ElasticIp extends Resource {
-  constructor() { super() }
+  constructor() {
+    super();
+  }
 
   public associateElasticIp(scope: Construct, ec2: CfnInstance, name: string): void {
     const elasticIp = new CfnEIP(scope, 'ElasticIpEc21a', {

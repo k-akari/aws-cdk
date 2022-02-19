@@ -1,6 +1,5 @@
 import { Construct } from 'constructs';
-import { CfnSecurityGroup, CfnSecurityGroupIngress, CfnSecurityGroupEgress } from 'aws-cdk-lib/aws-ec2';
-import { Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Vpc, CfnSecurityGroup, CfnSecurityGroupIngress, CfnSecurityGroupEgress } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 
 export class SecurityGroup extends Resource {

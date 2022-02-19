@@ -1,27 +1,17 @@
 import { Construct } from 'constructs';
-import { CfnRouteTable, CfnRoute, CfnSubnetRouteTableAssociation, CfnInternetGateway } from 'aws-cdk-lib/aws-ec2';
+import { Vpc, CfnRouteTable, CfnRoute, CfnSubnetRouteTableAssociation, CfnInternetGateway } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 import { Subnet } from './subnet';
-import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 export class RouteTable extends Resource {
   public public: CfnRouteTable;
 
-  private readonly vpc: Vpc;
-  private readonly subnet: Subnet;
-  private readonly igw: CfnInternetGateway;
-
-  constructor(scope: Construct, vpc: Vpc, subnet: Subnet, igw: CfnInternetGateway)
-  {
+  constructor(scope: Construct, vpc: Vpc, subnet: Subnet, igw: CfnInternetGateway) {
     super();
-
-    this.vpc = vpc;
-    this.subnet = subnet;
-    this.igw = igw;
 
     // Create a Route Table
     const routeTable = new CfnRouteTable(scope, 'RouteTablePublic', {
-      vpcId: this.vpc.vpcId,
+      vpcId: vpc.vpcId,
       tags: [{ key: 'Name', value: this.createResourceName(scope, 'rtb-public') }]
     });
 
@@ -29,17 +19,17 @@ export class RouteTable extends Resource {
     new CfnRoute(scope, 'RoutePublic', {
       routeTableId: routeTable.ref,
       destinationCidrBlock: '0.0.0.0/0',
-      gatewayId: this.igw.ref
+      gatewayId: igw.ref
     });
 
     // Associate the Route Table with Public Subnets
     new CfnSubnetRouteTableAssociation(scope, 'AssociationPublic1a', {
       routeTableId: routeTable.ref,
-      subnetId: this.subnet.public1a.ref
+      subnetId: subnet.public1a.ref
     });
     new CfnSubnetRouteTableAssociation(scope, 'AssociationPublic1c', {
       routeTableId: routeTable.ref,
-      subnetId: this.subnet.public1c.ref
+      subnetId: subnet.public1c.ref
     });
   }
 }
