@@ -8,6 +8,7 @@ export class VPC extends Resource {
   constructor(scope: Construct) {
     super();
 
+    // Create a VPC
     this.vpc = new Vpc(scope, 'Vpc', {
       vpcName: this.createResourceName(scope, 'vpc'),
       cidr: '10.0.0.0/16',

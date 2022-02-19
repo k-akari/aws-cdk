@@ -18,12 +18,7 @@ export class Elb extends Resource {
     this.securityGroup = sg;
     this.ec2 = ec2;
 
-    const loadBalancer = this.createLoadBalancer(scope);
-    const targetGroup = this.createTargetGroup(scope);
-    this.createListener(scope, loadBalancer, targetGroup);
-  }
-
-  private createLoadBalancer(scope: Construct): CfnLoadBalancer {
+    // Create an Application Load Balancer
     const loadBalancer = new CfnLoadBalancer(scope, 'Alb', {
       ipAddressType: 'ipv4',
       name: this.createResourceName(scope, 'alb'),
@@ -33,10 +28,7 @@ export class Elb extends Resource {
       type: 'application'
     });
 
-    return loadBalancer;
-  }
-
-  private createTargetGroup(scope: Construct): CfnTargetGroup {
+    // Create a Target Group
     const targetGroup = new CfnTargetGroup(scope, 'AlbTargetGroup', {
       name: this.createResourceName(scope, 'tg'),
       port: 80,
@@ -46,18 +38,12 @@ export class Elb extends Resource {
       vpcId: this.vpc.vpcId
     });
 
-    return targetGroup;
-  }
-
-  private createListener(scope: Construct, loadBalancer: CfnLoadBalancer, targetGroup: CfnTargetGroup) {
+    // Create a Listner
     new CfnListener(scope, 'AlbListener', {
       defaultActions: [{
         type: 'forward',
         forwardConfig: {
-          targetGroups: [{
-            targetGroupArn: targetGroup.ref,
-            weight: 1
-          }]
+          targetGroups: [{ targetGroupArn: targetGroup.ref, weight: 1 }]
         }
       }],
       loadBalancerArn: loadBalancer.ref,
