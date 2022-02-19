@@ -5,7 +5,6 @@ import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 export class InternetGateway extends Resource {
   public igw: CfnInternetGateway;
-
   private readonly vpc: Vpc;
 
   constructor(scope: Construct, vpc: Vpc) {
@@ -13,10 +12,12 @@ export class InternetGateway extends Resource {
   
     this.vpc = vpc;
 
+    // Create Internet Gateway
     this.igw = new CfnInternetGateway(scope, 'InternetGateway', {
       tags: [{ key: 'Name', value: this.createResourceName(scope, 'igw') }]
     });
 
+    // Attach the Internet Gateway to the VPC
     new CfnVPCGatewayAttachment(scope, 'VpcGatewayAttachment', {
       vpcId: this.vpc.vpcId,
       internetGatewayId: this.igw.ref
