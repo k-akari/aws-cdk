@@ -10,6 +10,17 @@ Object {
     },
   },
   "Resources": Object {
+    "Ec2Association": Object {
+      "Properties": Object {
+        "EIP": Object {
+          "Ref": "ElasticIpEc21a",
+        },
+        "InstanceId": Object {
+          "Ref": "Ec2Instance1a",
+        },
+      },
+      "Type": "AWS::EC2::EIPAssociation",
+    },
     "Ec2Instance1a": Object {
       "Properties": Object {
         "AvailabilityZone": "ap-northeast-1a",
@@ -34,6 +45,18 @@ Object {
         ],
       },
       "Type": "AWS::EC2::Instance",
+    },
+    "ElasticIpEc21a": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "service-test-eip-ec2-1a",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
     },
   },
   "Rules": Object {
