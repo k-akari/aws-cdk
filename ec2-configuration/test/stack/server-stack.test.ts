@@ -18,7 +18,7 @@ test('ServerStackSnapshot', () => {
   const networkStack = new Network.NetworkStack(app, 'NetworkStack');
   const iamStack = new Iam.IamStack(app, 'IamStack');
   const securityGroupStack = new SecurityGroup.SecurityGroupStack(app, 'SecurityGroupStack', networkStack.vpc);
-  const serverStack = new Server.ServerStack(app, 'ServerStack', networkStack.subnet.private1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2);
+  const serverStack = new Server.ServerStack(app, 'ServerStack', networkStack.subnet.public1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2);
   const template = Template.fromStack(serverStack);
 
   expect(template).toMatchSnapshot();

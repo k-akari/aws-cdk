@@ -18,15 +18,15 @@ test('Ec2', () => {
   const networkStack = new Network.NetworkStack(app, 'NetworkStack');
   const iamStack = new Iam.IamStack(app, 'IamStack');
   const securityGroupStack = new SecurityGroup.SecurityGroupStack(app, 'SecurityGroupStack', networkStack.vpc);
-  const serverStack = new Server.ServerStack(app, 'ServerStack', networkStack.subnet.private1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2);
+  const serverStack = new Server.ServerStack(app, 'ServerStack', networkStack.subnet.public1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2);
   const template = Template.fromStack(serverStack);
 
   template.resourceCountIs('AWS::EC2::Instance', 1);
   template.hasResourceProperties('AWS::EC2::Instance', {
     AvailabilityZone: 'ap-northeast-1a',
     IamInstanceProfile: { 'Fn::ImportValue': Match.anyValue() },
-    ImageId: 'ami-06631ebafb3ae5d34',
-    InstanceType: 't2.micro',
+    ImageId: 'ami-08a8688fb7eacb171',
+    InstanceType: 't3.small',
     SecurityGroupIds: [{ 'Fn::ImportValue': Match.anyValue() }],
     SubnetId: { 'Fn::ImportValue': Match.anyValue() },
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-ec2-1a` }]

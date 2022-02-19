@@ -41,19 +41,6 @@ export class NetworkAcl extends Resource {
         }
       ],
       assign: networkAcl => this.public = networkAcl
-    },
-    {
-      id: 'NetworkAclPrivate',
-      name: 'nacl-private',
-      entryIdInbound: 'NetworkAclEntryInboundPrivate',
-      entryIdOutbound: 'NetworkAclEntryOutboundPrivate',
-      associations: [
-        {
-          id: 'NetworkAclAssociationPrivate1a',
-          subnetId: () => this.subnet.private1a.ref
-        }
-      ],
-      assign: networkAcl => this.private = networkAcl
     }
   ];
 

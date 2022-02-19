@@ -22,7 +22,7 @@ Object {
         ],
         "Subnets": Array [
           Object {
-            "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPrivate1aAFF32B55",
+            "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPublic1a52A57DE6",
           },
           Object {
             "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPublic1c785C7D25",

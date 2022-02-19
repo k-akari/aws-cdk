@@ -29,7 +29,7 @@ export class Elb extends Resource {
       name: this.createResourceName(scope, 'alb'),
       scheme: 'internet-facing',
       securityGroups: [this.securityGroup.attrGroupId],
-      subnets: [this.subnet.private1a.ref, this.subnet.public1c.ref],
+      subnets: [this.subnet.public1a.ref, this.subnet.public1c.ref],
       type: 'application'
     });
 

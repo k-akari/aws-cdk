@@ -1,6 +1,6 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { Vpc, CfnSubnet, CfnSecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { Vpc, CfnSecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { CfnInstance } from 'aws-cdk-lib/aws-ec2';
 import { Elb } from '../resource/elb';
 import { Subnet } from '../resource/subnet';

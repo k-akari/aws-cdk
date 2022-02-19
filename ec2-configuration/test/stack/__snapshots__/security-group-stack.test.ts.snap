@@ -42,6 +42,21 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
+    "SecurityGroupEgressEc21": Object {
+      "Properties": Object {
+        "CidrIp": "0.0.0.0/0",
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "SecurityGroupEc2",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
     "SecurityGroupIngressAlb1": Object {
       "Properties": Object {
         "CidrIp": "0.0.0.0/0",

@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import { CfnInternetGateway, CfnVPCGatewayAttachment, CfnVPC } from 'aws-cdk-lib/aws-ec2';
+import { CfnInternetGateway, CfnVPCGatewayAttachment } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 

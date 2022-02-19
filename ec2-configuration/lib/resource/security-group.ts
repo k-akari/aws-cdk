@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import { CfnSecurityGroup, CfnSecurityGroupIngress, CfnSecurityGroupIngressProps } from 'aws-cdk-lib/aws-ec2';
+import { CfnSecurityGroup, CfnSecurityGroupIngress, CfnSecurityGroupIngressProps, CfnSecurityGroupEgress } from 'aws-cdk-lib/aws-ec2';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Resource } from './abstract/resource';
 
@@ -10,10 +10,21 @@ interface IngressInfo {
   readonly sourceSecurityGroupId?: () => string;
 }
 
+interface EgressInfo {
+  readonly id: string;
+  readonly ipProtocol: string;
+  readonly cidrIp: string;
+  readonly fromPort: number;
+  readonly toPort: number;
+  readonly groupId: () => string;
+  readonly sourceSecurityGroupId?: () => string;
+}
+
 interface SecurityGroupInfo {
   readonly id: string;
   readonly groupDescription: string;
   readonly ingresses: IngressInfo[];
+  readonly egresses?: EgressInfo[];
   readonly resourceName: string;
   readonly assign: (securityGroup: CfnSecurityGroup) => void;
 }
@@ -67,6 +78,16 @@ export class SecurityGroup extends Resource {
           sourceSecurityGroupId: () => this.alb.attrGroupId,
         }
       ],
+      egresses: [
+        {
+          id: 'SecurityGroupEgressEc21',
+          ipProtocol: 'tcp',
+          cidrIp: '0.0.0.0/0',
+          fromPort: 443,
+          toPort: 443,
+          groupId: () => this.ec2.attrGroupId
+        }
+      ],
       resourceName: 'sg-ec2',
       assign: securityGroup => this.ec2 = securityGroup
     }
@@ -82,6 +103,7 @@ export class SecurityGroup extends Resource {
       securityGroupInfo.assign(securityGroup);
 
       this.createSecurityGroupIngress(scope, securityGroupInfo);
+      this.createSecurityGroupEgress(scope, securityGroupInfo);
     }
   };
 
@@ -107,6 +129,20 @@ export class SecurityGroup extends Resource {
 
       if (ingress.sourceSecurityGroupId) {
         securityGroupIngress.sourceSecurityGroupId = ingress.sourceSecurityGroupId();
+      }
+    }
+  }
+
+  private createSecurityGroupEgress(scope: Construct, securityGroupInfo: SecurityGroupInfo) {
+    if (securityGroupInfo.egresses) {
+      for (const egress of securityGroupInfo.egresses) {
+        new CfnSecurityGroupEgress(scope, egress.id, {
+          ipProtocol: egress.ipProtocol,
+          cidrIp: egress.cidrIp,
+          fromPort: egress.fromPort,
+          toPort: egress.toPort,
+          groupId: this.ec2.attrGroupId
+        });
       }
     }
   }

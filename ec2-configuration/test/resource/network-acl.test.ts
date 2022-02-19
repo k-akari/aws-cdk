@@ -14,21 +14,15 @@ test('NetworkAcl', () => {
   const stack = new Network.NetworkStack(app, 'NetworkStack');
   const template = Template.fromStack(stack);
 
-  template.resourceCountIs('AWS::EC2::NetworkAcl', 2);
+  template.resourceCountIs('AWS::EC2::NetworkAcl', 1);
   template.hasResourceProperties('AWS::EC2::NetworkAcl', {
     VpcId: Match.objectLike({
       Ref: Match.anyValue()
     }),
     Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-nacl-public` }]
   });
-  template.hasResourceProperties('AWS::EC2::NetworkAcl', {
-    VpcId: Match.objectLike({
-      Ref: Match.anyValue()
-    }),
-    Tags: [{ 'Key': 'Name', 'Value': `${serviceName}-${envType}-nacl-private` }]
-  });
 
-  template.resourceCountIs('AWS::EC2::NetworkAclEntry', 4);
+  template.resourceCountIs('AWS::EC2::NetworkAclEntry', 2);
   template.hasResourceProperties('AWS::EC2::NetworkAclEntry', {
     NetworkAclId: Match.objectLike({
       Ref: 'NetworkAclPublic'
@@ -38,24 +32,22 @@ test('NetworkAcl', () => {
     RuleNumber: 100,
     CidrBlock: '0.0.0.0/0'
   });
-  template.hasResourceProperties('AWS::EC2::NetworkAclEntry', {
-    NetworkAclId: Match.objectLike({
-      Ref: 'NetworkAclPrivate'
-    }),
-    Protocol: -1,
-    RuleAction: 'allow',
-    RuleNumber: 100,
-    CidrBlock: '0.0.0.0/0',
-    Egress: true
-  });
 
-  template.resourceCountIs('AWS::EC2::SubnetNetworkAclAssociation', 3);
+  template.resourceCountIs('AWS::EC2::SubnetNetworkAclAssociation', 2);
   template.hasResourceProperties('AWS::EC2::SubnetNetworkAclAssociation', {
     NetworkAclId: Match.objectLike({
-      Ref: 'NetworkAclPrivate'
+      Ref: 'NetworkAclPublic'
     }),
     SubnetId: Match.objectLike({
-      Ref: 'SubnetPrivate1a'
+      Ref: 'SubnetPublic1a'
+    }),
+  });
+  template.hasResourceProperties('AWS::EC2::SubnetNetworkAclAssociation', {
+    NetworkAclId: Match.objectLike({
+      Ref: 'NetworkAclPublic'
+    }),
+    SubnetId: Match.objectLike({
+      Ref: 'SubnetPublic1c'
     }),
   });
 });

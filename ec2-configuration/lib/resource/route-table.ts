@@ -3,7 +3,6 @@ import { CfnRouteTable, CfnRoute, CfnSubnetRouteTableAssociation } from 'aws-cdk
 import { Resource } from './abstract/resource';
 import { Subnet } from './subnet';
 import { InternetGateway } from './internet-gateway';
-import { NatGateway } from './nat-gateway';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 interface RouteInfo {
@@ -34,7 +33,6 @@ export class RouteTable extends Resource {
   private readonly vpc: Vpc;
   private readonly subnet: Subnet;
   private readonly internetGateway: InternetGateway;
-  private readonly natGateway: NatGateway;
   private readonly routeTableInfos: RouteTableInfo[] = [
     {
       id: 'RouteTablePublic',
@@ -55,31 +53,16 @@ export class RouteTable extends Resource {
         }
       ],
       assign: routeTable => this.public = routeTable
-    },
-    {
-      id: 'RouteTablePrivate1a',
-      name: 'rtb-private-1a',
-      routes: [{
-        id: 'RoutePrivate1a',
-        destinationCidrBlock: '0.0.0.0/0',
-        natGatewayId: () => this.natGateway.ngw1a.ref
-      }],
-      associations: [{
-        id: 'AssociationPrivate1a',
-        subnetId: () => this.subnet.private1a.ref
-      }],
-      assign: routeTable => this.private1a = routeTable
     }
   ];
 
-  constructor(scope: Construct, vpc: Vpc, subnet: Subnet, internetGateway: InternetGateway, natGateway: NatGateway
-  ) {
+  constructor(scope: Construct, vpc: Vpc, subnet: Subnet, internetGateway: InternetGateway)
+  {
     super();
 
     this.vpc = vpc;
     this.subnet = subnet;
     this.internetGateway = internetGateway;
-    this.natGateway = natGateway;
 
     for (const routeTableInfo of this.routeTableInfos) {
       const routeTable = this.createRouteTable(scope, routeTableInfo);

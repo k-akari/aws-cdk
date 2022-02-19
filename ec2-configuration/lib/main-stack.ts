@@ -22,7 +22,7 @@ export class MainStack extends Stack {
       stackName: 'iam-stack'
     });
 
-    const serverStack = new ServerStack(scope, 'ServerStack', networkStack.subnet.private1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2, {
+    const serverStack = new ServerStack(scope, 'ServerStack', networkStack.subnet.public1a, iamStack.iamRole.instanceProfile, securityGroupStack.sg.ec2, {
       stackName: 'server-stack'
     });
 

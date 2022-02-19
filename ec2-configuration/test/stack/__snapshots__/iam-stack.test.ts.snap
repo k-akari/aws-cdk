@@ -45,7 +45,9 @@ Object {
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [],
+        "ManagedPolicyArns": Array [
+          "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+        ],
         "RoleName": "service-test-role-ec2",
       },
       "Type": "AWS::IAM::Role",

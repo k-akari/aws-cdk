@@ -16,8 +16,8 @@ interface Ec2InstanceInfo {
 export class Ec2 extends Resource {
   public mainInstance: CfnInstance;
 
-  private static readonly latestImageIdAmazonLinux2 = 'ami-06631ebafb3ae5d34';
-  private static readonly instanceType = 't2.micro';
+  private static readonly latestImageIdAmazonLinux2 = 'ami-08a8688fb7eacb171';
+  private static readonly instanceType = 't3.small';
 
   private readonly subnet: CfnSubnet;
   private readonly instanceProfile: CfnInstanceProfile;

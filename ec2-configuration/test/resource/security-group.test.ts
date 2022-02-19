@@ -64,4 +64,15 @@ test('SecurityGroup', () => {
     }),
     SourceSecurityGroupId: Match.anyValue()
   });
+
+  template.resourceCountIs('AWS::EC2::SecurityGroupEgress', 1);
+  template.hasResourceProperties('AWS::EC2::SecurityGroupEgress', {
+    IpProtocol: 'tcp',
+    CidrIp: '0.0.0.0/0',
+    FromPort: 443,
+    ToPort: 443,
+    GroupId: Match.objectLike({
+      'Fn::GetAtt': Match.arrayWith(['SecurityGroupEc2', 'GroupId'])
+    })
+  });
 });

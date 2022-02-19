@@ -10,17 +10,6 @@ Object {
     },
   },
   "Resources": Object {
-    "AssociationPrivate1a": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "RouteTablePrivate1a",
-        },
-        "SubnetId": Object {
-          "Ref": "SubnetPrivate1a",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
     "AssociationPublic1a": Object {
       "Properties": Object {
         "RouteTableId": Object {
@@ -43,18 +32,6 @@ Object {
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ElasticIpNgw1a": Object {
-      "Properties": Object {
-        "Domain": "vpc",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "service-test-eip-ngw-1a",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::EIP",
-    },
     "InternetGateway": Object {
       "Properties": Object {
         "Tags": Array [
@@ -65,37 +42,6 @@ Object {
         ],
       },
       "Type": "AWS::EC2::InternetGateway",
-    },
-    "NatGateway1a": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
-            "ElasticIpNgw1a",
-            "AllocationId",
-          ],
-        },
-        "SubnetId": Object {
-          "Ref": "SubnetPublic1a",
-        },
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "service-test-ngw-1a",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::NatGateway",
-    },
-    "NetworkAclAssociationPrivate1a": Object {
-      "Properties": Object {
-        "NetworkAclId": Object {
-          "Ref": "NetworkAclPrivate",
-        },
-        "SubnetId": Object {
-          "Ref": "SubnetPrivate1a",
-        },
-      },
-      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
     },
     "NetworkAclAssociationPublic1a": Object {
       "Properties": Object {
@@ -119,38 +65,12 @@ Object {
       },
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
     },
-    "NetworkAclEntryInboundPrivate": Object {
-      "Properties": Object {
-        "CidrBlock": "0.0.0.0/0",
-        "Egress": false,
-        "NetworkAclId": Object {
-          "Ref": "NetworkAclPrivate",
-        },
-        "Protocol": -1,
-        "RuleAction": "allow",
-        "RuleNumber": 100,
-      },
-      "Type": "AWS::EC2::NetworkAclEntry",
-    },
     "NetworkAclEntryInboundPublic": Object {
       "Properties": Object {
         "CidrBlock": "0.0.0.0/0",
         "Egress": false,
         "NetworkAclId": Object {
           "Ref": "NetworkAclPublic",
-        },
-        "Protocol": -1,
-        "RuleAction": "allow",
-        "RuleNumber": 100,
-      },
-      "Type": "AWS::EC2::NetworkAclEntry",
-    },
-    "NetworkAclEntryOutboundPrivate": Object {
-      "Properties": Object {
-        "CidrBlock": "0.0.0.0/0",
-        "Egress": true,
-        "NetworkAclId": Object {
-          "Ref": "NetworkAclPrivate",
         },
         "Protocol": -1,
         "RuleAction": "allow",
@@ -171,20 +91,6 @@ Object {
       },
       "Type": "AWS::EC2::NetworkAclEntry",
     },
-    "NetworkAclPrivate": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "service-test-nacl-private",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "Vpc8378EB38",
-        },
-      },
-      "Type": "AWS::EC2::NetworkAcl",
-    },
     "NetworkAclPublic": Object {
       "Properties": Object {
         "Tags": Array [
@@ -199,18 +105,6 @@ Object {
       },
       "Type": "AWS::EC2::NetworkAcl",
     },
-    "RoutePrivate1a": Object {
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
-          "Ref": "NatGateway1a",
-        },
-        "RouteTableId": Object {
-          "Ref": "RouteTablePrivate1a",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
     "RoutePublic": Object {
       "Properties": Object {
         "DestinationCidrBlock": "0.0.0.0/0",
@@ -222,20 +116,6 @@ Object {
         },
       },
       "Type": "AWS::EC2::Route",
-    },
-    "RouteTablePrivate1a": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "service-test-rtb-private-1a",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "Vpc8378EB38",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
     },
     "RouteTablePublic": Object {
       "Properties": Object {
@@ -250,22 +130,6 @@ Object {
         },
       },
       "Type": "AWS::EC2::RouteTable",
-    },
-    "SubnetPrivate1a": Object {
-      "Properties": Object {
-        "AvailabilityZone": "ap-northeast-1a",
-        "CidrBlock": "10.0.100.0/24",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "service-test-subnet-private-1a",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "Vpc8378EB38",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
     },
     "SubnetPublic1a": Object {
       "Properties": Object {

@@ -16,15 +16,15 @@ Object {
         "IamInstanceProfile": Object {
           "Fn::ImportValue": "IamStack:ExportsOutputRefInstanceProfileB20CF27C",
         },
-        "ImageId": "ami-06631ebafb3ae5d34",
-        "InstanceType": "t2.micro",
+        "ImageId": "ami-08a8688fb7eacb171",
+        "InstanceType": "t3.small",
         "SecurityGroupIds": Array [
           Object {
             "Fn::ImportValue": "SecurityGroupStack:ExportsOutputFnGetAttSecurityGroupEc2GroupId103D9309",
           },
         ],
         "SubnetId": Object {
-          "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPrivate1aAFF32B55",
+          "Fn::ImportValue": "NetworkStack:ExportsOutputRefSubnetPublic1a52A57DE6",
         },
         "Tags": Array [
           Object {
