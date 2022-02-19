@@ -1,63 +1,73 @@
 import { Construct } from 'constructs';
-import { CfnRole, PolicyStatementProps, ServicePrincipal, Effect, PolicyStatement, PolicyDocument, CfnInstanceProfile } from 'aws-cdk-lib/aws-iam';
+import { CfnRole, ServicePrincipal, Effect, PolicyStatement, PolicyDocument, CfnInstanceProfile, OpenIdConnectProvider, FederatedPrincipal } from 'aws-cdk-lib/aws-iam';
 import { Resource } from './abstract/resource';
-
-interface IamRoleInfo {
-  readonly id: string;
-  readonly policyStatementProps: PolicyStatementProps;
-  readonly managedPolicyArns: string[];
-  readonly roleName: string;
-  readonly assign: (role: CfnRole) => void;
-}
 
 export class IamRole extends Resource {
   public ec2: CfnRole;
+  public github: CfnRole;
   public instanceProfile: CfnInstanceProfile
-
-  private readonly roleInfos: IamRoleInfo[] = [
-    {
-      id: 'RoleEc2',
-      policyStatementProps: {
-        effect: Effect.ALLOW,
-        principals: [new ServicePrincipal('ec2.amazonaws.com')],
-        actions: ['sts:AssumeRole']
-      },
-      managedPolicyArns: ['arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'],
-      roleName: 'role-ec2',
-      assign: role => this.ec2 = role
-    },
-  ];
 
   constructor(scope: Construct) {
     super();
 
-    for (const roleInfo of this.roleInfos) {
-      const role = this.createRole(scope, roleInfo);
-      roleInfo.assign(role);
-    }
-
-    this.instanceProfile = this.createInstanceProfile(scope, this.ec2);
+    [this.ec2, this.instanceProfile] = this.createEc2Role(scope);
+    this.github = this.createGithubRole(scope);
   }
 
-  private createRole(scope: Construct, iamRoleInfo: IamRoleInfo): CfnRole {
-    const policyStatement = new PolicyStatement(iamRoleInfo.policyStatementProps);
-    const policyDocument = new PolicyDocument({ statements: [policyStatement]});
-
-    const role = new CfnRole(scope, iamRoleInfo.id, {
-      assumeRolePolicyDocument: policyDocument,
-      managedPolicyArns: iamRoleInfo.managedPolicyArns,
-      roleName: this.createResourceName(scope, iamRoleInfo.roleName)
+  private createEc2Role(scope: Construct): [CfnRole, CfnInstanceProfile] {
+    // Define a Policy Document
+    const policyStatement = new PolicyStatement({
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('ec2.amazonaws.com')],
+      actions: ['sts:AssumeRole']
     });
 
-    return role;
-  }
+    // Create an Iam Role
+    const iamRole = new CfnRole(scope, 'RoleEc2', {
+      assumeRolePolicyDocument: new PolicyDocument({ statements: [policyStatement]}),
+      managedPolicyArns: ['arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'], // required to connect to SSM
+      roleName: this.createResourceName(scope, 'role-ec2')
+    });
 
-  private createInstanceProfile(scope: Construct, iamRole: CfnRole): CfnInstanceProfile {
+    // Create an Instance Profile
     const instanceProfile = new CfnInstanceProfile(scope, 'InstanceProfile', {
       roles: [iamRole.ref],
       instanceProfileName: iamRole.roleName
     });
 
-    return instanceProfile;
+    return [iamRole, instanceProfile];
+  }
+
+  private createGithubRole(scope: Construct): CfnRole {
+    // Create an OIDC Provider
+    const oidcProvider = new OpenIdConnectProvider(scope, 'OIDCProvider', {
+      url: 'https://vstoken.actions.githubusercontent.com',
+      clientIds: ['sigstore'],
+      thumbprints: ['a031c46782e6e6c662c2c87c76da9aa62ccabd8e']
+    });
+
+    // Create a Federated Principal
+    const federatedPrincipal = new FederatedPrincipal(
+      oidcProvider.openIdConnectProviderArn,
+      {
+        StringLike: {
+          'token.actions.githubusercontent.com:sub': `repo:${scope.node.tryGetContext('repositoryName')}:*`,
+        },
+      }
+    );
+
+    // Define Policy Statements
+    const policyStatements = [
+      new PolicyStatement({ effect: Effect.ALLOW, principals: [federatedPrincipal], actions: ['sts:AssumeRoleWithWebIdentity'] }), 
+      new PolicyStatement({ effect: Effect.ALLOW, resources: ['*'], actions: ['sts:GetCallerIdentity'] })
+    ];
+
+    // Create an Iam Role
+    const iamRole = new CfnRole(scope, 'RoleGithub', {
+      assumeRolePolicyDocument: new PolicyDocument({ statements: policyStatements}),
+      roleName: this.createResourceName(scope, 'role-github')
+    });
+
+    return iamRole;
   }
 }

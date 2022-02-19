@@ -29,6 +29,7 @@
       "aws-cn"
     ],
     "envType": "test",
-    "serviceName": "service"
+    "serviceName": "service",
+    "repositoryName": "planning-poker"
   }
 }
