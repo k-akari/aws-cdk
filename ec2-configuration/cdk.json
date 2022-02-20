@@ -30,6 +30,7 @@
     ],
     "envType": "test",
     "serviceName": "service",
-    "repositoryName": "planning-poker"
+    "githubOrgName": "k-akari",
+    "githubRepoName": "Test-of-Open-ID-Connect-for-GitHub-Actions"
   }
 }

@@ -1,5 +1,6 @@
 import { Construct } from 'constructs';
-import { CfnRole, ServicePrincipal, Effect, PolicyStatement, PolicyDocument, CfnInstanceProfile, OpenIdConnectProvider, FederatedPrincipal } from 'aws-cdk-lib/aws-iam';
+import { CfnRole, Role, ServicePrincipal, Effect, PolicyStatement, PolicyDocument,
+         CfnInstanceProfile, OpenIdConnectProvider, FederatedPrincipal, ManagedPolicy } from 'aws-cdk-lib/aws-iam';
 import { Resource } from './abstract/resource';
 
 export class IamRole extends Resource {
@@ -31,36 +32,51 @@ export class IamRole extends Resource {
     return instanceProfile;
   }
 
-  public createGithubRole(scope: Construct): CfnRole {
-    // Create an OIDC Provider
-    const oidcProvider = new OpenIdConnectProvider(scope, 'OIDCProvider', {
-      url: 'https://vstoken.actions.githubusercontent.com',
-      clientIds: ['sigstore'],
-      thumbprints: ['a031c46782e6e6c662c2c87c76da9aa62ccabd8e']
-    });
-
+  public createGithubRole(scope: Construct, oidcProvider: OpenIdConnectProvider): void {
     // Create a Federated Principal
-    const federatedPrincipal = new FederatedPrincipal(
+    const githubPrincipal = new FederatedPrincipal(
       oidcProvider.openIdConnectProviderArn,
       {
         StringLike: {
-          'token.actions.githubusercontent.com:sub': `repo:${scope.node.tryGetContext('repositoryName')}:*`,
+          'token.actions.githubusercontent.com:sub': `repo:${scope.node.tryGetContext('githubOrgName')}/${scope.node.tryGetContext('githubRepoName')}:*`,
         },
-      }
+        StringEquals : {
+          'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com'
+        },
+      },
+      'sts:AssumeRoleWithWebIdentity'
     );
 
-    // Define Policy Statements
-    const policyStatements = [
-      new PolicyStatement({ effect: Effect.ALLOW, principals: [federatedPrincipal], actions: ['sts:AssumeRoleWithWebIdentity'] }), 
-      new PolicyStatement({ effect: Effect.ALLOW, resources: ['*'], actions: ['sts:GetCallerIdentity'] })
-    ];
-
     // Create an Iam Role
-    const iamRole = new CfnRole(scope, 'RoleGithub', {
-      assumeRolePolicyDocument: new PolicyDocument({ statements: policyStatements}),
-      roleName: this.createResourceName(scope, 'role-github')
+    const githubRole = new Role(scope, 'RoleGithub', {
+      assumedBy: githubPrincipal,
+      path: '/',
+      roleName: this.createResourceName(scope, 'role-github'),
+      description: 'Role assumed by githubPrincipal for deploying from CI using aws cdk',
+      inlinePolicies: {
+        AssumeRolePolicy: new PolicyDocument({
+          statements: [
+            new PolicyStatement({ effect: Effect.ALLOW, resources: ['*'], actions: ['sts:GetCallerIdentity'] })
+          ]
+        })
+      }
     });
 
-    return iamRole;
+    // Policy for Opening and Closing EC2 Ports
+    const securityGroupEditablePolicy = new ManagedPolicy(scope, 'trigger-code-pipeline', {
+      managedPolicyName: 'trigger-codepipeline',
+      document: new PolicyDocument({
+        statements: [
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            resources: ['*'],
+            actions: ['ec2:AuthorizeSecurityGroupEgress', 'ec2:AuthorizeSecurityGroupIngress',
+                      'ec2:RevokeSecurityGroupEgress', 'ec2:RevokeSecurityGroupIngress']
+          })
+        ]
+      })
+    });
+
+    securityGroupEditablePolicy.attachToRole(githubRole);
   }
 }
